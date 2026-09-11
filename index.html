@@ -42,254 +42,428 @@ function openModal(id){const x=DB.find(a=>a.id===id);if(!x)return;let contact=x.
 function closeModal(){modal.style.display="none"}
 q.oninput=render;category.onchange=render;type.onchange=render;status.onchange=render;reset.onclick=()=>{q.value="";category.value="";type.value="";status.value="";render()};theme.onclick=()=>document.body.classList.toggle("dark");boot();
 </script>
-<div style="max-width:1180px;margin:12px auto 0;padding:0 18px">
-  <div class="card" style="padding:18px;border-left:4px solid var(--accent,#e4b400)">
-    <b>CallPage Master v9 — Indonesia Final Data Architecture</b>
-    <div class="muted" style="margin-top:5px">
-      v8 database dan materi tetap dipertahankan. v9 menambahkan hierarki nasional 38 → 514 → 7.285 → 83.762
-      secara on-demand serta pencarian tempat nyata berbasis OpenStreetMap. Data kontak resmi tetap mengikuti
-      prinsip verified / needs_review; tidak ada nomor atau alamat yang dibuat-buat.
-    </div>
-  </div>
+
+<style>
+:root{--cp-yellow:#f4c400;--cp-yellow2:#ffd84a;--cp-ink:#111;--cp-bg:#fff;--cp-card:#f7f7f5;--cp-muted:#707070;--cp-line:#e8e8e3}
+body.cp-app{margin:0;background:var(--cp-bg);color:var(--cp-ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body.cp-dark{--cp-bg:#000;--cp-card:#101010;--cp-ink:#fff;--cp-muted:#a8a8a8;--cp-line:#222}
+#cp-shell{min-height:100vh;padding-bottom:92px}
+.cp-top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--cp-bg) 92%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--cp-line)}
+.cp-topin{max-width:1180px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:14px}
+.cp-logo{width:38px;height:38px;border-radius:12px;background:var(--cp-yellow);display:grid;place-items:center;font-weight:900;color:#111}
+.cp-brand{font-weight:900;letter-spacing:-.04em;font-size:20px}.cp-brand small{display:block;font-size:10px;color:var(--cp-muted);letter-spacing:.04em}
+.cp-spacer{flex:1}.cp-icon{width:40px;height:40px;border:1px solid var(--cp-line);background:var(--cp-card);border-radius:13px;cursor:pointer}
+.cp-main{max-width:1180px;margin:auto;padding:24px 18px}
+.cp-hero{padding:12px 0 22px}.cp-hero h1{font-size:clamp(30px,5vw,48px);letter-spacing:-.055em;line-height:1;margin:10px 0}.cp-hero p{color:var(--cp-muted);margin:0;max-width:650px}
+.cp-search{margin-top:22px;display:flex;align-items:center;background:var(--cp-card);border:1px solid var(--cp-line);border-radius:18px;padding:7px 8px 7px 16px}
+.cp-search input{flex:1;border:0;outline:0;background:transparent;color:var(--cp-ink);font-size:16px}.cp-search button{border:0;background:var(--cp-yellow);border-radius:13px;padding:11px 16px;font-weight:800;cursor:pointer}
+.cp-section{margin:30px 0}.cp-sectionhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.cp-sectionhead h2{font-size:19px;margin:0;letter-spacing:-.025em}.cp-link{color:#9b7a00;cursor:pointer;font-weight:700;font-size:13px}
+.cp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.cp-grid4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.cp-cat,.cp-action,.cp-result{border:1px solid var(--cp-line);background:var(--cp-card);border-radius:18px;padding:15px;cursor:pointer;text-align:left;color:var(--cp-ink)}
+.cp-cat b,.cp-action b{display:block;margin-top:10px}.cp-cat span,.cp-action span{font-size:12px;color:var(--cp-muted)}
+.cp-symbol{width:38px;height:38px;border-radius:12px;background:var(--cp-yellow);display:grid;place-items:center;font-weight:900;color:#111}
+.cp-number{border-radius:20px;padding:18px;background:#111;color:white;cursor:pointer}.cp-number strong{font-size:26px;display:block}.cp-number span{color:#cfcfcf;font-size:12px}.cp-call{float:right;background:var(--cp-yellow);color:#111;border:0;border-radius:12px;padding:9px 12px;font-weight:900;cursor:pointer}
+.cp-results{display:grid;gap:9px}.cp-result{display:flex;gap:13px;align-items:center}.cp-result .cp-symbol{flex:none}.cp-result small{display:block;color:var(--cp-muted);margin-top:3px}
+.cp-bottom{position:fixed;z-index:30;bottom:0;left:0;right:0;border-top:1px solid var(--cp-line);background:color-mix(in srgb,var(--cp-bg) 94%,transparent);backdrop-filter:blur(18px)}
+.cp-bottomin{max-width:700px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);padding:7px 8px calc(7px + env(safe-area-inset-bottom))}
+.cp-nav{border:0;background:transparent;color:var(--cp-muted);padding:7px 2px;border-radius:13px;cursor:pointer;font-size:11px}.cp-nav b{display:block;font-size:18px;margin-bottom:3px}.cp-nav.active{color:#111;background:var(--cp-yellow);font-weight:800}
+.cp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:none;align-items:flex-end;justify-content:center}.cp-sheet{background:var(--cp-bg);color:var(--cp-ink);width:min(760px,100%);max-height:88vh;overflow:auto;border-radius:24px 24px 0 0;padding:22px}.cp-close{float:right;border:0;background:var(--cp-card);color:var(--cp-ink);border-radius:12px;padding:9px;cursor:pointer}
+.cp-detail-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:15px 0}.cp-detail-actions button{padding:13px;border-radius:14px;border:1px solid var(--cp-line);background:var(--cp-card);color:var(--cp-ink);font-weight:800;cursor:pointer}
+.cp-detail-actions .primary{background:var(--cp-yellow);color:#111;border-color:var(--cp-yellow)}
+.cp-toast{position:fixed;z-index:100;left:50%;bottom:100px;transform:translateX(-50%);background:#111;color:#fff;padding:11px 15px;border-radius:14px;display:none;font-size:13px}
+@media(min-width:720px){.cp-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.cp-grid2{grid-template-columns:repeat(2,minmax(0,1fr))}.cp-number{min-height:110px}.cp-bottom{left:auto;right:18px;bottom:18px;width:min(700px,calc(100% - 36px));border:1px solid var(--cp-line);border-radius:20px}}
+</style>
+
+<div id="cp-shell">
+<header class="cp-top"><div class="cp-topin">
+  <div class="cp-logo">C</div><div class="cp-brand">CallPage<small>FIND • KNOW • CALL • CONNECT</small></div>
+  <div class="cp-spacer"></div><button class="cp-icon" id="cp-theme" title="Tema">☾</button>
+</div></header>
+
+<main class="cp-main">
+<section class="cp-hero">
+  <div style="font-size:12px;color:#9b7a00;font-weight:900;letter-spacing:.08em">YOUR WORLD, WITHIN REACH.</div>
+  <h1>Temukan apa yang<br>kamu butuhkan.</h1>
+  <p>Nomor penting, layanan resmi, tempat, bisnis, panduan, dan pengetahuan dalam satu jaringan.</p>
+  <div class="cp-search"><input id="cp-search" placeholder="Cari polisi, rumah sakit, bank, SKCK, restoran…"><button id="cp-search-btn">Cari</button></div>
+</section>
+
+<section class="cp-section" id="cp-home">
+<div class="cp-sectionhead"><h2>Nomor Penting</h2><span class="cp-link" data-view="numbers">Lihat semua</span></div>
+<div class="cp-grid cp-grid2">
+  <div class="cp-number" data-phone="110"><button class="cp-call" data-call="110">CALL</button><strong>110</strong><span>Polisi • 24 jam</span></div>
+  <div class="cp-number" data-phone="119"><button class="cp-call" data-call="119">CALL</button><strong>119</strong><span>PSC Darurat Kesehatan</span></div>
+  <div class="cp-number" data-phone="115"><button class="cp-call" data-call="115">CALL</button><strong>115</strong><span>Basarnas • SAR</span></div>
+  <div class="cp-number" data-phone="112"><button class="cp-call" data-call="112">CALL</button><strong>112</strong><span>Darurat daerah yang tersedia</span></div>
+</div>
+</section>
+
+<section class="cp-section">
+<div class="cp-sectionhead"><h2>Jelajahi CallPage</h2><span class="cp-link" data-view="categories">Semua kategori</span></div>
+<div class="cp-grid">
+  <button class="cp-cat" data-cat="Government"><div class="cp-symbol">G</div><b>Government</b><span>Pemerintah & layanan publik</span></button>
+  <button class="cp-cat" data-cat="Health"><div class="cp-symbol">H</div><b>Health</b><span>RS, klinik, apotek & layanan</span></button>
+  <button class="cp-cat" data-cat="Business"><div class="cp-symbol">B</div><b>Business</b><span>Bisnis & jasa lokal</span></button>
+  <button class="cp-cat" data-cat="Transportation"><div class="cp-symbol">T</div><b>Transportation</b><span>Bandara, stasiun & transportasi</span></button>
+  <button class="cp-cat" data-cat="Education"><div class="cp-symbol">E</div><b>Education</b><span>Sekolah, kampus & belajar</span></button>
+  <button class="cp-cat" data-cat="Places"><div class="cp-symbol">P</div><b>Places</b><span>Tempat & fasilitas terdekat</span></button>
+  <button class="cp-cat" data-cat="Online Services"><div class="cp-symbol">O</div><b>Online Services</b><span>Portal resmi & layanan digital</span></button>
+  <button class="cp-cat" data-cat="Knowledge"><div class="cp-symbol">K</div><b>Knowledge</b><span>Pengetahuan & penjelasan</span></button>
+</div>
+</section>
+
+<section class="cp-section">
+<div class="cp-sectionhead"><h2>Akses cepat</h2></div>
+<div class="cp-grid">
+  <button class="cp-action" data-view="nearby"><div class="cp-symbol">⌖</div><b>Near Me</b><span>Cari tempat di sekitar</span></button>
+  <button class="cp-action" data-view="guides"><div class="cp-symbol">?</div><b>Guides</b><span>Apa yang harus dilakukan?</span></button>
+  <button class="cp-action" data-view="saved"><div class="cp-symbol">★</div><b>Saved</b><span>Favorit kamu</span></button>
+  <button class="cp-action" data-view="updates"><div class="cp-symbol">↻</div><b>Updates</b><span>Informasi terbaru</span></button>
+</div>
+</section>
+
+<section class="cp-section" id="cp-content"><div class="cp-sectionhead"><h2 id="cp-content-title">Untuk kamu</h2></div><div id="cp-results" class="cp-results"></div></section>
+</main>
+
+<nav class="cp-bottom"><div class="cp-bottomin">
+<button class="cp-nav active" data-view="home"><b>⌂</b>Home</button>
+<button class="cp-nav" data-view="search"><b>⌕</b>Search</button>
+<button class="cp-nav" data-view="nearby"><b>⌖</b>Near Me</button>
+<button class="cp-nav" data-view="saved"><b>★</b>Saved</button>
+<button class="cp-nav" data-view="settings"><b>⚙</b>Settings</button>
+</div></nav>
 </div>
 
+<div class="cp-overlay" id="cp-overlay"><div class="cp-sheet"><button class="cp-close" id="cp-close">✕</button><div id="cp-detail"></div></div></div>
+<div class="cp-toast" id="cp-toast"></div>
+
 <script>
-/* =========================================================
-   CALLPAGE MASTER v9 — INDONESIA NATIONAL DATA LAYER
-   Administrative source: wilayah.id, based on Kepmendagri
-   No invented phone/address data is generated.
-   Real-place discovery: OpenStreetMap Overpass, on demand.
-   ========================================================= */
-const CP_ADMIN = {
-  base:"https://wilayah.id/api",
-  endpoints:{
-    provinces:"/provinces.json",
-    regencies:(p)=>`/regencies/${encodeURIComponent(p)}.json`,
-    districts:(r)=>`/districts/${encodeURIComponent(r)}.json`,
-    villages:(d)=>`/villages/${encodeURIComponent(d)}.json`
-  },
-  source:"Wilayah.id / Kepmendagri No. 300.2.2-2138 Tahun 2025",
-  counts:{provinces:38,regencies:514,districts:7285,villages:83762}
-};
-
-const CP_PLACES = {
-  overpass:"https://overpass-api.de/api/interpreter",
-  presets:{
-    all:"nwr[\"name\"]",
-    hospital:"nwr[\"amenity\"=\"hospital\"]",
-    clinic:"nwr[\"amenity\"=\"clinic\"]",
-    pharmacy:"nwr[\"amenity\"=\"pharmacy\"]",
-    school:"nwr[\"amenity\"=\"school\"]",
-    university:"nwr[\"amenity\"=\"university\"]",
-    police:"nwr[\"amenity\"=\"police\"]",
-    fire:"nwr[\"amenity\"=\"fire_station\"]",
-    bank:"nwr[\"amenity\"=\"bank\"]",
-    fuel:"nwr[\"amenity\"=\"fuel\"]",
-    restaurant:"nwr[\"amenity\"=\"restaurant\"]",
-    hotel:"nwr[\"tourism\"=\"hotel\"]",
-    government:"nwr[\"office\"=\"government\"]",
-    transport:"nwr[\"public_transport\"]"
-  }
-};
-
-const CPCache = {
-  key:"callpage-v9-admin-cache",
-  read(){
-    try{return JSON.parse(localStorage.getItem(this.key)||"{}")}catch(e){return{}}
-  },
-  write(x){try{localStorage.setItem(this.key,JSON.stringify(x))}catch(e){}},
-  async get(url){
-    const c=this.read();
-    if(c[url]) return c[url];
-    const r=await fetch(url);
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const j=await r.json();
-    c[url]=j; this.write(c); return j;
-  }
-};
-
-const CallPageNational = {
-  async provinces(){ return (await CPCache.get(CP_ADMIN.base+CP_ADMIN.endpoints.provinces)).data||[] },
-  async regencies(code){ return (await CPCache.get(CP_ADMIN.base+CP_ADMIN.endpoints.regencies(code))).data||[] },
-  async districts(code){ return (await CPCache.get(CP_ADMIN.base+CP_ADMIN.endpoints.districts(code))).data||[] },
-  async villages(code){ return (await CPCache.get(CP_ADMIN.base+CP_ADMIN.endpoints.villages(code))).data||[] },
-
-  async searchAdmin(q){
-    q=(q||"").trim().toLowerCase();
-    if(!q) return [];
-    const out=[];
-    const provinces=await this.provinces();
-    for(const p of provinces){
-      if((p.name||"").toLowerCase().includes(q)) out.push({...p,level:"province"});
-    }
-    // Search regencies/districts only when a province/regency match is plausible.
-    for(const p of provinces){
-      const regs=await this.regencies(p.code);
-      for(const r of regs){
-        if((r.name||"").toLowerCase().includes(q)) out.push({...r,level:"regency",province:p.name});
-        if(out.length>=100) return out;
-      }
-    }
-    return out.slice(0,100);
-  },
-
-  async placesAround(lat,lng,radius=5000,preset="all"){
-    const selector=CP_PLACES.presets[preset]||CP_PLACES.presets.all;
-    const q=`[out:json][timeout:35];(${selector}(around:${radius},${lat},${lng}););out center tags;`;
-    const r=await fetch(CP_PLACES.overpass+"?data="+encodeURIComponent(q));
-    if(!r.ok) throw new Error("Overpass HTTP "+r.status);
-    const j=await r.json();
-    return (j.elements||[]).map(e=>{
-      const lat2=e.lat??e.center?.lat, lng2=e.lon??e.center?.lon;
-      const t=e.tags||{};
-      return {
-        id:"osm-"+e.type+"-"+e.id,
-        source:"OpenStreetMap",
-        sourceUrl:"https://www.openstreetmap.org/"+e.type+"/"+e.id,
-        name:t.name||"Unnamed place",
-        category:preset,
-        type:e.type,
-        lat:lat2,lng:lng2,
-        phone:t.phone||t["contact:phone"]||"",
-        website:t.website||t["contact:website"]||"",
-        address:[t["addr:housenumber"],t["addr:street"],t["addr:city"]].filter(Boolean).join(" "),
-        openingHours:t.opening_hours||"",
-        raw:t
-      };
-    });
-  }
-};
-
-window.CallPageNational=CallPageNational;
-window.CP_ADMIN=CP_ADMIN;
-window.CP_PLACES=CP_PLACES;
-
-/* Add a non-destructive National Data panel to the existing v8 UI. */
-document.addEventListener("DOMContentLoaded",()=>{
-  const app=document.body;
-  const panel=document.createElement("section");
-  panel.id="national-layer";
-  panel.style.cssText="max-width:1180px;margin:22px auto;padding:0 18px 40px";
-  panel.innerHTML=`
-  <div class="card" style="padding:22px">
-    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
-      <div>
-        <div class="eyebrow">MASTER v9 • INDONESIA NATIONAL LAYER</div>
-        <h2 style="margin:4px 0 6px">Wilayah + Tempat Nyata</h2>
-        <p class="muted" style="margin:0;max-width:780px">
-          Hierarki administratif Indonesia dimuat dari sumber wilayah terbaru dan tempat nyata dimuat
-          secara live dari OpenStreetMap sesuai wilayah/peta yang dipilih. Ini mencegah CallPage
-          berpura-pura memiliki database tempat yang sudah usang.
-        </p>
+(function(){
+  document.body.classList.add("cp-app");
+  const $=id=>document.getElementById(id), toast=s=>{const t=$("cp-toast");t.textContent=s;t.style.display="block";clearTimeout(window.__ct);window.__ct=setTimeout(()=>t.style.display="none",2200)};
+  let saved=JSON.parse(localStorage.getItem("callpage-saved")||"[]");
+  const db=window.CALLPAGE_DB||window.DB||window.database||window.DATA||[];
+  function all(){return Array.isArray(db)?db:(typeof window.CallPageEngine!=="undefined"&&CallPageEngine.all?CallPageEngine.all():[])}
+  function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+  function save(id){saved=saved.includes(id)?saved.filter(x=>x!==id):[...saved,id];localStorage.setItem("callpage-saved",JSON.stringify(saved));toast(saved.includes(id)?"Disimpan":"Dihapus dari tersimpan")}
+  function openDetail(x){
+    $("cp-detail").innerHTML=`<div style="font-size:12px;color:#9b7a00;font-weight:900">${esc(x.category||x.type||"CALLPAGE")}</div>
+      <h2 style="font-size:30px;letter-spacing:-.04em;margin:7px 0">${esc(x.name||"Detail")}</h2>
+      <p style="color:var(--cp-muted)">${esc(x.description||"Informasi CallPage")}</p>
+      <div class="cp-detail-actions">
+       ${x.phone?.[0]||x.phone?`<button class="primary" data-call="${esc(Array.isArray(x.phone)?x.phone[0]:x.phone)}">☎ Call</button>`:""}
+       <button data-save="${esc(x.id||x.name)}">${saved.includes(x.id||x.name)?"★ Saved":"☆ Save"}</button>
+       ${x.website?.[0]?`<button data-url="${esc(typeof x.website[0]==="string"?x.website[0]:x.website[0].url)}">🌐 Website</button>`:""}
+       ${x.address?`<button data-map="${esc(x.address)}">⌖ Map</button>`:""}
       </div>
-      <div class="stats" style="display:flex;gap:8px;flex-wrap:wrap">
-        <span class="pill">38 Provinsi</span><span class="pill">514 Kab/Kota</span>
-        <span class="pill">7.285 Kecamatan</span><span class="pill">83.762 Desa/Kelurahan</span>
-      </div>
-    </div>
-
-    <div class="grid" style="margin-top:18px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">
-      <label>Provinsi<select id="cp-prov"><option value="">Pilih provinsi</option></select></label>
-      <label>Kabupaten/Kota<select id="cp-reg"><option value="">Pilih kab/kota</option></select></label>
-      <label>Kecamatan<select id="cp-dist"><option value="">Pilih kecamatan</option></select></label>
-      <label>Desa/Kelurahan<select id="cp-vill"><option value="">Pilih desa/kelurahan</option></select></label>
-    </div>
-
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
-      <button class="primary" id="cp-load-vill">Muat desa/kelurahan</button>
-      <button id="cp-use-location">Gunakan lokasi saya</button>
-      <button id="cp-find-places">Cari tempat nyata</button>
-      <select id="cp-place-type" style="min-width:180px">
-        <option value="all">Semua tempat bernama</option>
-        <option value="hospital">Rumah sakit</option><option value="clinic">Klinik</option>
-        <option value="pharmacy">Apotek</option><option value="school">Sekolah</option>
-        <option value="university">Universitas</option><option value="police">Polisi</option>
-        <option value="fire">Pemadam</option><option value="bank">Bank</option>
-        <option value="fuel">SPBU</option><option value="restaurant">Restoran</option>
-        <option value="hotel">Hotel</option><option value="government">Pemerintah</option>
-        <option value="transport">Transportasi</option>
-      </select>
-    </div>
-
-    <div id="cp-status" class="muted" style="margin-top:12px">Siap. Data administratif akan diambil saat diperlukan dan disimpan sebagai cache browser.</div>
-    <div id="cp-results" style="margin-top:14px"></div>
-  </div>`;
-  app.appendChild(panel);
-
-  const $=id=>document.getElementById(id);
-  const status=(s)=>$("cp-status").textContent=s;
-  const fill=(sel,items,placeholder,fmt)=>{
-    sel.innerHTML=`<option value="">${placeholder}</option>`;
-    items.forEach(x=>{
-      const o=document.createElement("option"); o.value=x.code; o.textContent=fmt?fmt(x):x.name; sel.appendChild(o);
-    });
-  };
-  const renderRows=(items)=>{
-    $("cp-results").innerHTML=items.length
-      ? `<div class="list">${items.slice(0,250).map(x=>`
-        <div class="card" style="padding:13px;margin:7px 0">
-          <b>${escapeHTML(x.name||"Unnamed")}</b>
-          <div class="muted">${escapeHTML(x.category||x.level||"")}${x.address?" • "+escapeHTML(x.address):""}</div>
-          ${x.phone?`<div>☎ ${escapeHTML(x.phone)}</div>`:""}
-          ${x.website?`<div>🌐 <a href="${encodeURI(x.website)}" target="_blank" rel="noopener">Website</a></div>`:""}
-          ${x.sourceUrl?`<div class="muted">Source: OpenStreetMap</div>`:""}
-        </div>`).join("")}</div>`
-      : `<div class="muted">Tidak ada hasil.</div>`;
-  };
-  const escapeHTML=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-
-  (async()=>{
-    try{
-      status("Memuat 38 provinsi…");
-      const ps=await CallPageNational.provinces();
-      fill($("cp-prov"),ps,"Pilih provinsi");
-      status(`38 provinsi siap • sumber ${CP_ADMIN.source}`);
-    }catch(e){status("Gagal memuat wilayah. Pastikan koneksi internet aktif.");}
-  })();
-
-  $("cp-prov").onchange=async e=>{
-    const c=e.target.value;
-    fill($("cp-reg"),[],"Memuat kab/kota…"); fill($("cp-dist"),[],"Pilih kecamatan"); fill($("cp-vill"),[],"Pilih desa/kelurahan");
-    if(!c)return;
-    try{const x=await CallPageNational.regencies(c);fill($("cp-reg"),x,"Pilih kab/kota");status(`${x.length} kab/kota dimuat.`)}
-    catch(err){status("Gagal memuat kab/kota.");}
-  };
-  $("cp-reg").onchange=async e=>{
-    const c=e.target.value;
-    fill($("cp-dist"),[],"Memuat kecamatan…"); fill($("cp-vill"),[],"Pilih desa/kelurahan");
-    if(!c)return;
-    try{const x=await CallPageNational.districts(c);fill($("cp-dist"),x,"Pilih kecamatan");status(`${x.length} kecamatan dimuat.`)}
-    catch(err){status("Gagal memuat kecamatan.");}
-  };
-  $("cp-load-vill").onclick=async()=>{
-    const c=$("cp-dist").value;if(!c)return status("Pilih kecamatan terlebih dahulu.");
-    status("Memuat desa/kelurahan…");
-    try{const x=await CallPageNational.villages(c);fill($("cp-vill"),x,"Pilih desa/kelurahan");status(`${x.length} desa/kelurahan dimuat.`)}
-    catch(err){status("Gagal memuat desa/kelurahan.");}
-  };
-  $("cp-use-location").onclick=()=>{
-    if(!navigator.geolocation)return status("Browser tidak menyediakan geolocation.");
-    status("Meminta lokasi…");
-    navigator.geolocation.getCurrentPosition(
-      p=>{window.__cpLat=p.coords.latitude;window.__cpLng=p.coords.longitude;status(`Lokasi aktif: ${p.coords.latitude.toFixed(5)}, ${p.coords.longitude.toFixed(5)}.`)},
-      ()=>status("Lokasi tidak tersedia atau izin ditolak.")
-    );
-  };
-  $("cp-find-places").onclick=async()=>{
-    let lat=window.__cpLat,lng=window.__cpLng;
-    if(lat==null||lng==null){
-      const d=$("cp-dist").value;
-      if(!d)return status("Pilih kecamatan atau aktifkan lokasi terlebih dahulu.");
-      status("Untuk pencarian tempat berdasarkan kecamatan, pilih lokasi perangkat agar hasil peta nyata lebih presisi.");
-      return;
-    }
-    status("Mencari tempat nyata dari OpenStreetMap…");
-    try{
-      const x=await CallPageNational.placesAround(lat,lng,5000,$("cp-place-type").value);
-      renderRows(x);status(`${x.length} tempat ditemukan dalam radius 5 km.`);
-    }catch(e){status("Gagal mengambil data tempat nyata. Coba lagi beberapa saat.");}
-  };
-});
+      ${x.services?.length?`<h3>Services</h3><ul>${x.services.map(y=>`<li>${esc(y)}</li>`).join("")}</ul>`:""}
+      ${x.history?.length?`<h3>History</h3><p>${esc(x.history.join(" "))}</p>`:""}
+      ${x.structure?.length?`<h3>Structure</h3><ul>${x.structure.map(y=>`<li>${esc(y)}</li>`).join("")}</ul>`:""}
+      ${x.ranks?.length?`<h3>Ranks</h3><ul>${x.ranks.map(y=>`<li>${esc(y)}</li>`).join("")}</ul>`:""}
+      ${x.guides?.length?`<h3>Guide</h3><ul>${x.guides.map(y=>`<li>${esc(y)}</li>`).join("")}</ul>`:""}
+      ${x.sources?.length?`<h3>Sources & Verification</h3><p>${esc(x.verificationStatus||"needs_review")}</p>`:""}`;
+    $("cp-overlay").style.display="flex";
+  }
+  function show(title,items){
+    $("cp-content-title").textContent=title;
+    $("cp-results").innerHTML=items.length?items.slice(0,50).map(x=>`<button class="cp-result" data-id="${esc(x.id||x.name)}"><div class="cp-symbol">${esc((x.name||"?")[0])}</div><div><b>${esc(x.name)}</b><small>${esc(x.category||x.subcategory||x.type||"")}</small></div></button>`).join(""):`<div class="cp-result"><div><b>Belum ada data</b><small>Gunakan pencarian atau tambahkan sumber resmi.</small></div></div>`;
+    window.__cpItems=items;
+  }
+  function search(q){
+    q=q.trim().toLowerCase(); if(!q)return show("Untuk kamu",all().slice(0,12));
+    const arr=all().filter(x=>JSON.stringify(x).toLowerCase().includes(q));
+    show("Hasil pencarian",arr);
+  }
+  function view(v){
+    document.querySelectorAll(".cp-nav").forEach(b=>b.classList.toggle("active",b.dataset.view===v));
+    if(v==="home"){location.hash="home";return window.scrollTo({top:0,behavior:"smooth"})}
+    if(v==="search"){location.hash="search";$("cp-search").focus();return}
+    if(v==="saved"){return show("Tersimpan",all().filter(x=>saved.includes(x.id||x.name)))}
+    if(v==="nearby"){location.hash="nearby";return show("Near Me",[])}
+    if(v==="settings"){return show("Settings",[])}
+    if(v==="numbers")return show("Nomor Penting",all().filter(x=>["Important Numbers","Important Numbers"].includes(x.category)));
+    if(v==="categories")return show("Kategori",all());
+    if(v==="guides")return show("Guides",all().filter(x=>x.category==="Guides"));
+    if(v==="updates")return show("Updates",[]);
+  }
+  document.addEventListener("click",e=>{
+    const call=e.target.closest("[data-call]");if(call){location.href="tel:"+call.dataset.call;return}
+    const saveBtn=e.target.closest("[data-save]");if(saveBtn){save(saveBtn.dataset.save);return}
+    const url=e.target.closest("[data-url]");if(url){window.open(url.dataset.url,"_blank","noopener");return}
+    const map=e.target.closest("[data-map]");if(map){window.open("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(map.dataset.map),"_blank");return}
+    const item=e.target.closest("[data-id]");if(item){const x=(window.__cpItems||[]).find(y=>(y.id||y.name)===item.dataset.id);if(x)openDetail(x);return}
+    const v=e.target.closest("[data-view]");if(v){view(v.dataset.view);return}
+    const cat=e.target.closest("[data-cat]");if(cat){show(cat.dataset.cat,all().filter(x=>String(x.category||"").toLowerCase()===cat.dataset.cat.toLowerCase()));return}
+  });
+  $("cp-search-btn").onclick=()=>search($("cp-search").value);
+  $("cp-search").onkeydown=e=>{if(e.key==="Enter")search(e.target.value)};
+  $("cp-close").onclick=()=>$("cp-overlay").style.display="none";
+  $("cp-overlay").onclick=e=>{if(e.target.id==="cp-overlay")$("cp-overlay").style.display="none"};
+  $("cp-theme").onclick=()=>{document.body.classList.toggle("cp-dark");localStorage.setItem("callpage-theme",document.body.classList.contains("cp-dark")?"dark":"light")};
+  if(localStorage.getItem("callpage-theme")==="dark")document.body.classList.add("cp-dark");
+  show("Untuk kamu",all().slice(0,12));
+})();
 </script>
 
+
+<script>
+/* CALLPAGE PRODUCTION PATCH — practical service guides */
+(function(){
+  const GUIDE_PACK = [
+    {
+      id:"guide-kk-kematian",
+      name:"Perubahan KK karena Anggota Keluarga Meninggal",
+      category:"Guides", type:"Administrasi Kependudukan",
+      description:"Checklist awal untuk perubahan Kartu Keluarga setelah anggota keluarga meninggal. Persyaratan dapat berbeda menurut kondisi dan daerah, sehingga kanal Dukcapil resmi setempat tetap menjadi rujukan terakhir.",
+      phone:[], email:[],
+      website:[{label:"Indonesia.go.id — SIPP",url:"https://indonesia.go.id/layanan/keuangan/sosial/sistem-informasi-pelayanan-publik-sipp"}],
+      services:["Perubahan susunan anggota KK","Pembaruan data kependudukan"],
+      history:[], structure:[], ranks:[],
+      guides:[
+        "Tentukan jenis perubahan data yang akan diajukan.",
+        "Siapkan dokumen yang membuktikan peristiwa kematian sesuai ketentuan yang berlaku.",
+        "Bawa KK yang akan diperbarui dan dokumen identitas/dokumen pendukung yang diminta.",
+        "Pastikan data kematian sudah tercatat atau tanyakan proses pencatatannya kepada Dukcapil.",
+        "Sebelum datang, konfirmasi persyaratan, lokasi layanan, jam layanan, biaya, dan apakah tersedia layanan daring.",
+        "Simpan bukti pengajuan sampai KK baru diterima."
+      ],
+      related:[],
+      sources:[{label:"Indonesia.go.id — SIPP",url:"https://indonesia.go.id/layanan/keuangan/sosial/sistem-informasi-pelayanan-publik-sipp"}],
+      status:"needs_review", country:"Indonesia", updatedAt:"2026-09-10"
+    },
+    {
+      id:"guide-kk-umum",
+      name:"Mengurus Perubahan Kartu Keluarga",
+      category:"Guides", type:"Administrasi Kependudukan",
+      description:"Checklist umum sebelum mengurus perubahan KK agar pengguna dapat mengecek dokumen dan kanal layanan terlebih dahulu.",
+      phone:[],
+      website:[{label:"Indonesia.go.id — SIPP",url:"https://indonesia.go.id/layanan/keuangan/sosial/sistem-informasi-pelayanan-publik-sipp"}],
+      services:["Perubahan data keluarga","Perubahan anggota keluarga","Pembaruan elemen data"],
+      history:[], structure:[], ranks:[],
+      guides:[
+        "Tentukan alasan perubahan KK.",
+        "Catat setiap dokumen yang berhubungan dengan perubahan tersebut.",
+        "Periksa kesesuaian nama, NIK, tanggal lahir, dan hubungan keluarga.",
+        "Konfirmasi daftar persyaratan terbaru kepada Dukcapil kabupaten/kota.",
+        "Konfirmasi apakah layanan harus dilakukan langsung atau dapat diajukan secara daring.",
+        "Simpan nomor atau bukti permohonan."
+      ],
+      related:["guide-kk-kematian"],
+      sources:[{label:"Indonesia.go.id — SIPP",url:"https://indonesia.go.id/layanan/keuangan/sosial/sistem-informasi-pelayanan-publik-sipp"}],
+      status:"needs_review", country:"Indonesia", updatedAt:"2026-09-10"
+    },
+    {
+      id:"guide-skck-resmi",
+      name:"Mengurus SKCK",
+      category:"Guides", type:"Kepolisian",
+      description:"Panduan menuju kanal resmi SKCK Polri dan pengecekan persyaratan sebelum pengajuan.",
+      phone:[],
+      website:[
+        {label:"Polri — SKCK",url:"https://www.polri.go.id/layanan/skck"},
+        {label:"Portal SKCK Polri",url:"https://skck.polri.go.id/"}
+      ],
+      services:["Informasi SKCK","Pendaftaran","Penerbitan"],
+      history:[], structure:[], ranks:[],
+      guides:[
+        "Periksa persyaratan terbaru di kanal resmi Polri.",
+        "Gunakan portal atau kanal resmi yang ditunjukkan Polri.",
+        "Siapkan dokumen sesuai persyaratan yang berlaku.",
+        "Periksa lokasi dan jam layanan sebelum berangkat.",
+        "Simpan bukti pendaftaran atau permohonan."
+      ],
+      related:[],
+      sources:[
+        {label:"Polri — SKCK",url:"https://www.polri.go.id/layanan/skck"},
+        {label:"SKCK Polri",url:"https://skck.polri.go.id/"}
+      ],
+      status:"verified", country:"Indonesia", updatedAt:"2026-09-10"
+    },
+    {
+      id:"guide-medical-emergency",
+      name:"Membutuhkan Bantuan Medis Darurat",
+      category:"Guides", type:"Kesehatan",
+      description:"Langkah awal mengakses bantuan kegawatdaruratan kesehatan melalui kanal resmi.",
+      phone:["119"],
+      website:[{label:"Kemenkes — PSC 119",url:"https://kemkes.go.id/id/layanan/psc-119"}],
+      services:["PSC 119","Bantuan kegawatdaruratan kesehatan"],
+      history:[], structure:[], ranks:[],
+      guides:[
+        "Pastikan lokasi dapat dijelaskan kepada petugas.",
+        "Hubungi PSC 119 untuk kebutuhan kegawatdaruratan kesehatan.",
+        "Jelaskan kondisi utama, lokasi, dan jumlah orang yang membutuhkan bantuan.",
+        "Ikuti instruksi petugas."
+      ],
+      related:[],
+      sources:[{label:"Kemenkes — PSC 119",url:"https://kemkes.go.id/id/layanan/psc-119"}],
+      status:"verified", country:"Indonesia", updatedAt:"2026-09-10"
+    },
+    {
+      id:"guide-public-complaint",
+      name:"Mengajukan Pengaduan Pelayanan Publik",
+      category:"Guides", type:"Pelayanan Publik",
+      description:"Panduan menyusun pengaduan pelayanan publik secara jelas dan terarah.",
+      phone:[],
+      website:[{label:"LAPOR! — Instansi",url:"https://lapor.go.id/instansi"}],
+      services:["Pengaduan","Pemilihan instansi","Pemantauan tindak lanjut"],
+      history:[], structure:[], ranks:[],
+      guides:[
+        "Pilih instansi yang berkaitan dengan masalah.",
+        "Tulis kronologi secara singkat dan faktual.",
+        "Cantumkan waktu, lokasi, dan layanan yang digunakan bila relevan.",
+        "Lampirkan bukti yang memang diperlukan dan aman dibagikan.",
+        "Simpan nomor pengaduan untuk memantau tindak lanjut."
+      ],
+      related:[],
+      sources:[{label:"LAPOR! — Instansi",url:"https://lapor.go.id/instansi"}],
+      status:"verified", country:"Indonesia", updatedAt:"2026-09-10"
+    }
+  ];
+
+  // Inject into the existing global DB if it is accessible.
+  if (Array.isArray(window.DB)) {
+    const ids = new Set(window.DB.map(x=>x.id));
+    GUIDE_PACK.forEach(x=>{ if(!ids.has(x.id)) window.DB.push(x); });
+  }
+
+  // If the existing page keeps DB in a lexical binding, expose a merged accessor
+  // used by the new "Guides" quick action.
+  window.CALLPAGE_GUIDE_PACK = GUIDE_PACK;
+})();
+</script>
+
+<script>
+(function(){
+  const originalFetch = window.fetch;
+  // Keep all existing behavior intact; add a "Practical Guides" shortcut if the
+  // current home page exposes the quick-access area.
+  function addGuideShortcut(){
+    const host=[...document.querySelectorAll("section,.section")].find(x=>/Akses cepat|Quick Access/i.test(x.innerText||""));
+    if(!host || host.dataset.cpGuideAdded)return;
+    host.dataset.cpGuideAdded="1";
+    const b=document.createElement("button");
+    b.className="card cat";
+    b.innerHTML='<div class="symbol">✓</div><b>Practical Guides</b><small>Siapkan dokumen sebelum datang</small>';
+    b.onclick=()=>{ if(typeof window.showView==="function") window.showView("Guides"); else { const q=document.querySelector("#searchInput"); if(q){q.value=""; q.dispatchEvent(new Event("input"));} } };
+    const grid=host.querySelector(".grid"); if(grid)grid.appendChild(b);
+  }
+  setTimeout(addGuideShortcut,600);
+})();
+</script>
+
+
+<style>
+.cp-matter{margin:14px 0}.cp-breadcrumb{font-size:11px;color:#8d7100;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.cp-tree{display:grid;gap:9px}.cp-tree button{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:16px;padding:14px;text-align:left}.cp-tree button b{display:block}.cp-tree button small{color:var(--muted)}
+.cp-content{display:grid;grid-template-columns:1fr;gap:10px}.cp-entry{border:1px solid var(--line);border-radius:18px;padding:15px;background:var(--card)}.cp-entry h3{margin:0 0 5px;font-size:18px}.cp-entry .cp-meta{font-size:11px;color:#8d7100;font-weight:850}
+.cp-tabs{display:flex;gap:7px;overflow:auto;margin:12px 0}.cp-tabs button{white-space:nowrap;border:1px solid var(--line);background:var(--soft);color:var(--text);border-radius:999px;padding:8px 11px;font-weight:800}.cp-tabs button.active{background:var(--accent);border-color:var(--accent);color:#111}
+.cp-block{border-top:1px solid var(--line);padding:14px 0}.cp-block h4{margin:0 0 7px}.cp-block ul{margin:0;padding-left:20px}.cp-block li{margin:5px 0}
+.cp-back{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:9px 12px;font-weight:800}
+</style>
+<script>
+window.CALLPAGE_CONTENT=[{"id":"gov-kk-kematian","title":"Perubahan KK karena Anggota Keluarga Meninggal","about":"Panduan persiapan sebelum mengajukan perubahan Kartu Keluarga setelah anggota keluarga meninggal.","who":"Anggota keluarga atau penduduk yang perlu memperbarui susunan/data dalam KK.","when":"Setelah peristiwa kematian dan dokumen pendukung tersedia.","documents":["KK yang akan diperbarui","Dokumen/bukti kematian sesuai ketentuan","Identitas dan dokumen pendukung sesuai kondisi"],"steps":["Tentukan jenis perubahan data yang diperlukan.","Pastikan peristiwa kematian sudah tercatat atau tanyakan proses pencatatannya.","Periksa persyaratan Dukcapil kabupaten/kota sebelum datang.","Siapkan dokumen sesuai daftar persyaratan terbaru.","Ajukan melalui kanal layanan yang tersedia.","Simpan bukti pengajuan dan periksa kembali data pada KK yang diterbitkan."],"cost":"Ikuti ketentuan layanan Dukcapil setempat.","time":"Ikuti standar pelayanan Dukcapil setempat.","mistakes":["Datang tanpa mengecek persyaratan terbaru.","Mengandalkan daftar persyaratan dari sumber tidak resmi.","Tidak memeriksa kembali NIK, nama, tanggal lahir, dan hubungan keluarga.","Tidak menyimpan bukti pengajuan."],"sources":[{"label":"Indonesia.go.id — SIPP","url":"https://indonesia.go.id/layanan/keuangan/sosial/sistem-informasi-pelayanan-publik-sipp"}],"category":"Government","material":"Administrasi Kependudukan","submaterial":"Perubahan Kartu Keluarga"},{"id":"gov-kk-umum","title":"Perubahan Kartu Keluarga","about":"Checklist umum untuk perubahan elemen data atau susunan anggota keluarga dalam KK.","who":"Keluarga yang membutuhkan pembaruan data kependudukan.","when":"Saat terjadi perubahan data keluarga yang perlu dicatat dalam KK.","documents":["KK","Dokumen yang menjadi dasar perubahan","Identitas/dokumen pendukung sesuai jenis perubahan"],"steps":["Identifikasi jenis perubahan.","Catat dokumen dasar perubahan.","Periksa data pada KK dan dokumen pendukung.","Konfirmasi persyaratan kepada Dukcapil daerah.","Ajukan layanan dan simpan bukti permohonan."],"cost":"Ikuti ketentuan layanan Dukcapil setempat.","time":"Ikuti standar pelayanan Dukcapil setempat.","mistakes":["Tidak memastikan jenis layanan yang tepat.","Membawa dokumen yang tidak sesuai.","Tidak mengecek kanal resmi daerah."],"sources":[{"label":"Indonesia.go.id — SIPP","url":"https://indonesia.go.id/layanan/keuangan/sosial/sistem-informasi-pelayanan-publik-sipp"}],"category":"Government","material":"Administrasi Kependudukan","submaterial":"Perubahan Kartu Keluarga"},{"id":"gov-skck","title":"Mengurus SKCK","about":"Panduan menuju kanal resmi SKCK Polri dan pengecekan persyaratan sebelum pengajuan.","who":"Pemohon SKCK sesuai kebutuhan dan ketentuan yang berlaku.","when":"Saat membutuhkan SKCK untuk keperluan yang memerlukannya.","documents":["Dokumen persyaratan sesuai ketentuan Polri","Data identitas pemohon"],"steps":["Periksa persyaratan terbaru di kanal resmi Polri.","Gunakan kanal/portal resmi yang ditunjukkan Polri.","Lengkapi data dan dokumen yang diminta.","Periksa lokasi dan ketentuan pelayanan sebelum datang.","Simpan bukti pendaftaran atau permohonan."],"cost":"Periksa ketentuan resmi terbaru.","time":"Periksa standar layanan pada kanal resmi.","mistakes":["Menggunakan situs pendaftaran tidak resmi.","Datang tanpa memeriksa persyaratan terbaru."],"sources":[{"label":"Polri — SKCK","url":"https://www.polri.go.id/layanan/skck"},{"label":"Portal SKCK Polri","url":"https://skck.polri.go.id/"}],"category":"Government","material":"Dokumen Kepolisian","submaterial":"SKCK"},{"id":"health-psc119","title":"Membutuhkan Bantuan Medis Darurat","about":"Langkah awal mengakses bantuan kegawatdaruratan kesehatan melalui PSC 119.","who":"Masyarakat yang membutuhkan bantuan kegawatdaruratan kesehatan.","when":"Saat membutuhkan pertolongan medis darurat.","documents":["Informasi lokasi","Informasi kondisi utama","Informasi jumlah orang yang membutuhkan bantuan"],"steps":["Pastikan lokasi dapat dijelaskan kepada petugas.","Hubungi 119.","Jelaskan kondisi utama dan lokasi.","Ikuti instruksi petugas."],"cost":"Periksa ketentuan layanan resmi.","time":"Tergantung kondisi dan penanganan lapangan.","mistakes":["Memberikan lokasi yang tidak jelas.","Mengikuti informasi dari kanal tidak resmi."],"sources":[{"label":"Kemenkes — PSC 119","url":"https://kemkes.go.id/id/layanan/psc-119"}],"category":"Health","material":"Kegawatdaruratan","submaterial":"PSC 119"},{"id":"public-lapor","title":"Mengajukan Pengaduan Pelayanan Publik","about":"Panduan menyusun pengaduan pelayanan publik agar masalah dapat diteruskan ke instansi terkait.","who":"Masyarakat yang ingin menyampaikan pengaduan pelayanan publik.","when":"Saat mengalami masalah pelayanan atau ingin menyampaikan pengaduan.","documents":["Kronologi kejadian","Waktu/lokasi bila relevan","Bukti pendukung bila diperlukan"],"steps":["Pilih instansi yang berkaitan.","Tulis kronologi secara singkat dan faktual.","Masukkan informasi penting seperti waktu dan lokasi.","Lampirkan bukti yang aman dibagikan.","Simpan nomor pengaduan untuk pemantauan."],"cost":"Tidak ditampilkan sebagai biaya layanan pada panduan ini.","time":"Mengikuti proses tindak lanjut instansi.","mistakes":["Kronologi terlalu umum.","Tidak memilih instansi yang sesuai.","Membagikan data pribadi yang tidak diperlukan."],"sources":[{"label":"LAPOR! — Instansi","url":"https://lapor.go.id/instansi"}],"category":"Public Services","material":"Pengaduan","submaterial":"LAPOR!"}];
+(function(){
+ const E=window.CALLPAGE_CONTENT||[];
+ function esc2(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+ function groups(){return [...new Set(E.map(x=>x.category))]}
+ function material(cat){return [...new Set(E.filter(x=>x.category===cat).map(x=>x.material))]
+ }
+ function sub(cat,mat){return [...new Set(E.filter(x=>x.category===cat&&x.material===mat).map(x=>x.submaterial))}
+ function entry(id){return E.find(x=>x.id===id)}
+ window.openCallPageContent=function(){
+   const root=document.querySelector("main")||document.body;
+   const old=document.getElementById("cp-content-app"); if(old)old.remove();
+   const box=document.createElement("section");box.id="cp-content-app";box.className="cp-matter";
+   box.innerHTML='<div class="cp-tree"><h2>Materi & Submateri</h2><p style="color:var(--muted)">Struktur pengetahuan CallPage: Kategori → Materi → Submateri → Entry.</p>'+groups().map(c=>`<button data-cpcat="${esc2(c)}"><b>${esc2(c)}</b><small>${material(c).length} materi · ${E.filter(x=>x.category===c).length} entry</small></button>`).join("")+'</div>';
+   root.appendChild(box);
+   box.querySelectorAll("[data-cpcat]").forEach(b=>b.onclick=()=>renderMaterials(box,b.dataset.cpcat));
+   box.scrollIntoView({behavior:"smooth"});
+ }
+ function renderMaterials(box,cat){
+   box.innerHTML=`<button class="cp-back" id="cp-back">← Kategori</button><h2>${esc2(cat)}</h2><div class="cp-tree">${material(cat).map(m=>`<button data-cpmat="${esc2(m)}"><b>${esc2(m)}</b><small>${sub(cat,m).length} submateri</small></button>`).join("")}</div>`;
+   box.querySelector("#cp-back").onclick=()=>openCallPageContent();
+   box.querySelectorAll("[data-cpmat]").forEach(b=>b.onclick=()=>renderSubs(box,cat,b.dataset.cpmat));
+ }
+ function renderSubs(box,cat,mat){
+   box.innerHTML=`<button class="cp-back" id="cp-back">← Materi</button><div class="cp-breadcrumb">${esc2(cat)} / ${esc2(mat)}</div><h2>Submateri</h2><div class="cp-tree">${sub(cat,mat).map(s=>`<button data-cpsub="${esc2(s)}"><b>${esc2(s)}</b><small>${E.filter(x=>x.category===cat&&x.material===mat&&x.submaterial===s).length} entry</small></button>`).join("")}</div>`;
+   box.querySelector("#cp-back").onclick=()=>renderMaterials(box,cat);
+   box.querySelectorAll("[data-cpsub]").forEach(b=>b.onclick=()=>renderEntries(box,cat,mat,b.dataset.cpsub));
+ }
+ function renderEntries(box,cat,mat,sm){
+   const rows=E.filter(x=>x.category===cat&&x.material===mat&&x.submaterial===sm);
+   box.innerHTML=`<button class="cp-back" id="cp-back">← Submateri</button><div class="cp-breadcrumb">${esc2(cat)} / ${esc2(mat)} / ${esc2(sm)}</div><h2>Entry</h2><div class="cp-content">${rows.map(x=>`<button class="cp-entry" data-cpid="${esc2(x.id)}"><h3>${esc2(x.title)}</h3><div class="cp-meta">Entry ID: ${esc2(x.id)}</div><p style="color:var(--muted)">${esc2(x.about)}</p></button>`).join("")}</div>`;
+   box.querySelector("#cp-back").onclick=()=>renderSubs(box,cat,mat);
+   box.querySelectorAll("[data-cpid]").forEach(b=>b.onclick=()=>renderEntry(box,entry(b.dataset.cpid)));
+ }
+ function renderEntry(box,x){
+   box.innerHTML=`<button class="cp-back" id="cp-back">← Entry</button><div class="cp-breadcrumb">${esc2(x.category)} / ${esc2(x.material)} / ${esc2(x.submaterial)}</div><h2>${esc2(x.title)}</h2>
+   <div class="cp-tabs"><button class="active">Materi</button><button>Submateri</button><button>Entry</button></div>
+   <div class="cp-block"><h4>About</h4><p>${esc2(x.about)}</p></div>
+   <div class="cp-block"><h4>Siapa yang membutuhkan?</h4><p>${esc2(x.who)}</p></div>
+   <div class="cp-block"><h4>Kapan dibutuhkan?</h4><p>${esc2(x.when)}</p></div>
+   <div class="cp-block"><h4>Dokumen / Persiapan</h4><ul>${x.documents.map(v=>`<li>${esc2(v)}</li>`).join("")}</ul></div>
+   <div class="cp-block"><h4>Langkah</h4><ol>${x.steps.map(v=>`<li>${esc2(v)}</li>`).join("")}</ol></div>
+   <div class="cp-block"><h4>Biaya</h4><p>${esc2(x.cost)}</p></div>
+   <div class="cp-block"><h4>Estimasi waktu</h4><p>${esc2(x.time)}</p></div>
+   <div class="cp-block"><h4>Kesalahan yang harus dihindari</h4><ul>${x.mistakes.map(v=>`<li>${esc2(v)}</li>`).join("")}</ul></div>
+   <div class="cp-block"><h4>Sumber</h4>${x.sources.map(s=>`<p><a href="${esc2(s.url)}" target="_blank" rel="noopener">${esc2(s.label)}</a></p>`).join("")}</div>`;
+   box.querySelector("#cp-back").onclick=()=>renderEntries(box,x.category,x.material,x.submaterial);
+ }
+})();
+</script>
+
+<script>
+(function(){
+  function install(){
+    const candidates=[...document.querySelectorAll("button")].filter(b=>/Guides|Practical Guides/i.test(b.innerText||""));
+    if(!candidates.length)return;
+    const host=candidates[0].parentElement?.parentElement||candidates[0].parentElement;
+    if(host && !document.getElementById("cp-material-btn")){
+      const b=document.createElement("button");
+      b.id="cp-material-btn";b.className="card cat";
+      b.innerHTML='<div class="symbol">M</div><b>Materi & Submateri</b><small>Kategori → materi → submateri → entry</small>';
+      b.onclick=window.openCallPageContent;
+      const grid=host.querySelector(".grid")||host;
+      grid.appendChild(b);
+    }
+  }
+  setTimeout(install,800);
+})();
+</script>
+
+
+<script>
+window.CALLPAGE_DATABASE_V11=[{"id": "gov-kk-baru", "category": "Government", "material": "Administrasi Kependudukan", "submaterial": "Kartu Keluarga", "title": "KK Baru", "about": "Penerbitan KK baru untuk kondisi keluarga yang memerlukan dokumen baru.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-kk-lahir", "category": "Government", "material": "Administrasi Kependudukan", "submaterial": "Kartu Keluarga", "title": "Perubahan KK karena Kelahiran", "about": "Pembaruan KK setelah kelahiran anggota keluarga.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-kk-nikah", "category": "Government", "material": "Administrasi Kependudukan", "submaterial": "Kartu Keluarga", "title": "KK karena Perkawinan", "about": "Pembaruan susunan keluarga setelah perkawinan.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-kk-cerai", "category": "Government", "material": "Administrasi Kependudukan", "submaterial": "Kartu Keluarga", "title": "KK karena Perceraian", "about": "Pembaruan susunan keluarga setelah perceraian.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-kk-pindah", "category": "Government", "material": "Administrasi Kependudukan", "submaterial": "Kartu Keluarga", "title": "KK karena Pindah Domisili", "about": "Pembaruan data keluarga karena perpindahan domisili.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-ktpel", "category": "Government", "material": "Administrasi Kependudukan", "submaterial": "KTP-el", "title": "Perekaman KTP-el", "about": "Panduan umum persiapan perekaman KTP-el.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-ikd", "category": "Government", "material": "Administrasi Kependudukan", "submaterial": "Identitas Kependudukan Digital", "title": "Aktivasi IKD", "about": "Panduan umum aktivasi Identitas Kependudukan Digital.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-akta-kematian", "category": "Government", "material": "Administrasi Kependudukan", "submaterial": "Akta Kematian", "title": "Pencatatan Kematian", "about": "Panduan umum pencatatan peristiwa kematian.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-akta-lahir", "category": "Government", "material": "Administrasi Kependudukan", "submaterial": "Akta Kelahiran", "title": "Pencatatan Kelahiran", "about": "Panduan umum pencatatan kelahiran.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-kia", "category": "Government", "material": "Administrasi Kependudukan", "submaterial": "Kartu Identitas Anak", "title": "KIA", "about": "Panduan umum pengurusan Kartu Identitas Anak.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-paspor-baru", "category": "Government", "material": "Keimigrasian", "submaterial": "Paspor", "title": "Paspor Baru", "about": "Persiapan umum pengajuan paspor baru melalui imigrasi resmi.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://www.imigrasi.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-paspor-ganti", "category": "Government", "material": "Keimigrasian", "submaterial": "Paspor", "title": "Penggantian Paspor", "about": "Panduan umum penggantian paspor.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://www.imigrasi.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-npwp", "category": "Government", "material": "Perpajakan", "submaterial": "NPWP", "title": "Administrasi NPWP", "about": "Akses layanan administrasi perpajakan melalui kanal resmi DJP.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://www.pajak.go.id/"}], "verificationStatus": "needs_review"}, {"id": "gov-spt", "category": "Government", "material": "Perpajakan", "submaterial": "Pelaporan", "title": "SPT Tahunan", "about": "Panduan umum persiapan pelaporan SPT Tahunan.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://www.pajak.go.id/"}], "verificationStatus": "needs_review"}, {"id": "org-spkt", "category": "Organizations", "material": "Kepolisian", "submaterial": "Pelayanan Polisi", "title": "SPKT", "about": "Entry layanan SPKT sebagai titik layanan kepolisian masyarakat.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://www.polri.go.id/layanan/spkt"}], "verificationStatus": "needs_review"}, {"id": "org-skck", "category": "Organizations", "material": "Kepolisian", "submaterial": "Dokumen Kepolisian", "title": "SKCK", "about": "Pengurusan SKCK melalui kanal resmi Polri.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://www.polri.go.id/layanan/skck"}], "verificationStatus": "needs_review"}, {"id": "num-110", "category": "Important Numbers", "material": "Kepolisian", "submaterial": "Layanan Darurat", "title": "Polisi 110", "about": "Kontak layanan kepolisian untuk kebutuhan bantuan polisi.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://www.polri.go.id/"}], "verificationStatus": "needs_review"}, {"id": "health-bpjs", "category": "Health", "material": "Jaminan Kesehatan", "submaterial": "BPJS Kesehatan", "title": "Care Center 165", "about": "Kontak layanan BPJS Kesehatan.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://www.bpjs-kesehatan.go.id/"}], "verificationStatus": "needs_review"}, {"id": "health-119", "category": "Health", "material": "Kegawatdaruratan", "submaterial": "PSC 119", "title": "Bantuan Medis Darurat", "about": "Akses bantuan kegawatdaruratan kesehatan melalui PSC 119.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://kemkes.go.id/id/layanan/psc-119"}], "verificationStatus": "needs_review"}, {"id": "health-kemenkes", "category": "Health", "material": "Informasi Kesehatan", "submaterial": "Kementerian Kesehatan", "title": "Halo Kemenkes", "about": "Kontak resmi Kementerian Kesehatan.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://kemkes.go.id/id/layanan/contact-us"}], "verificationStatus": "needs_review"}, {"id": "transport-kendaraan", "category": "Transportation", "material": "Transportasi Jalan", "submaterial": "Kendaraan", "title": "Administrasi Kendaraan", "about": "Titik awal layanan administrasi kendaraan.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "online-lapor", "category": "Online Services", "material": "Layanan Pemerintah", "submaterial": "Pengaduan", "title": "LAPOR!", "about": "Kanal pengaduan pelayanan publik.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Situs resmi terkait", "url": "https://lapor.go.id/instansi"}], "verificationStatus": "needs_review"}, {"id": "guide-berkas-kurang", "category": "Guides", "material": "Administrasi Keluarga", "submaterial": "Situasi", "title": "Berkas Kurang Saat Datang ke Loket", "about": "Checklist agar pengguna tidak perlu bolak-balik karena berkas kurang.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "guide-situs-resmi", "category": "Guides", "material": "Pelayanan Publik", "submaterial": "Verifikasi", "title": "Memastikan Situs Resmi", "about": "Checklist membedakan kanal resmi dari tautan meragukan.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "know-requirement", "category": "Knowledge", "material": "Pelayanan Publik", "submaterial": "Konsep Dasar", "title": "Apa itu Persyaratan Layanan?", "about": "Penjelasan tentang persyaratan sebuah layanan.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}, {"id": "know-standard", "category": "Knowledge", "material": "Pelayanan Publik", "submaterial": "Konsep Dasar", "title": "Apa itu Standar Pelayanan?", "about": "Penjelasan unsur standar pelayanan publik.", "who": "Masyarakat atau pemohon yang membutuhkan layanan/informasi ini.", "when": "Saat kebutuhan atau kondisi pada entry terjadi.", "documents": ["Dokumen identitas", "Dokumen dasar sesuai jenis layanan", "Bukti pendukung bila diperlukan"], "steps": ["Tentukan jenis layanan yang benar.", "Periksa persyaratan terbaru pada sumber resmi.", "Siapkan dokumen sesuai daftar.", "Ajukan melalui kanal resmi yang tersedia.", "Simpan bukti pengajuan.", "Periksa hasil dan data yang diterbitkan."], "cost": "Periksa ketentuan resmi terbaru untuk layanan terkait.", "time": "Ikuti standar pelayanan instansi/daerah terkait.", "mistakes": ["Menggunakan sumber tidak resmi.", "Datang tanpa mengecek persyaratan terbaru.", "Tidak menyimpan bukti pengajuan.", "Tidak memeriksa data hasil layanan."], "sources": [{"label": "Sumber resmi / perlu verifikasi sesuai entry", "url": "https://indonesia.go.id/"}], "verificationStatus": "needs_review"}];
+window.CALLPAGE_DATABASE_V11_META={version:"11.0",total:26,hierarchy:"Kategori → Materi → Submateri → Entry"};
+</script>
+<style>
+#cpdb11{margin:16px 0}#cpdb11 .dbbox{background:var(--card,#fff);border:1px solid var(--line,#ddd);border-radius:18px;padding:15px}
+#cpdb11 select,#cpdb11 input{box-sizing:border-box;width:100%;padding:11px;margin:5px 0;border-radius:12px;border:1px solid var(--line,#ddd);background:var(--card,#fff);color:var(--text,#111)}
+#cpdb11 .dbitem{display:block;width:100%;text-align:left;margin:8px 0;padding:13px;border-radius:14px;border:1px solid var(--line,#ddd);background:var(--card,#fff);color:var(--text,#111)}
+#cpdb11 .dbtag{font-size:10px;font-weight:800;color:#a17d00;text-transform:uppercase}#cpdb11 h3{margin:5px 0}
+#cpdb11 .dbdetail{line-height:1.5}#cpdb11 .dbdetail li{margin:5px 0}
+</style>
+<script>
+(function(){
+ const D=window.CALLPAGE_DATABASE_V11||[];
+ const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+ window.openCallPageDB11=function(){
+  let x=document.getElementById("cpdb11");
+  if(!x){x=document.createElement("section");x.id="cpdb11";(document.querySelector("main")||document.body).appendChild(x)}
+  x.innerHTML='<div class="dbbox"><h2>Database Indonesia</h2><p style="color:var(--muted,#777)">Kategori → Materi → Submateri → Entry · '+D.length+' entry</p><input id="dbq" placeholder="Cari entry, materi, submateri..."><select id="dbc"><option value="">Semua kategori</option>'+[...new Set(D.map(e=>e.category))].map(v=>'<option>'+esc(v)+'</option>').join('')+'</select><select id="dbm"><option value="">Semua materi</option></select><div id="dbl"></div></div>';
+  const q=x.querySelector("#dbq"),c=x.querySelector("#dbc"),m=x.querySelector("#dbm"),l=x.querySelector("#dbl");
+  function refreshM(){m.innerHTML='<option value="">Semua materi</option>'+[...new Set(D.filter(e=>!c.value||e.category===c.value).map(e=>e.material))].map(v=>'<option>'+esc(v)+'</option>').join('');}
+  function render(){
+   const n=q.value.toLowerCase(), a=D.filter(e=>(!c.value||e.category===c.value)&&(!m.value||e.material===m.value)&&(!n||[e.title,e.category,e.material,e.submaterial,e.about].join(" ").toLowerCase().includes(n)));
+   l.innerHTML=a.map(e=>'<button class="dbitem" data-id="'+esc(e.id)+'"><div class="dbtag">'+esc(e.category)+' / '+esc(e.material)+' / '+esc(e.submaterial)+'</div><h3>'+esc(e.title)+'</h3><div style="color:var(--muted,#777);font-size:12px">'+esc(e.about)+'</div></button>').join('')||'<p>Tidak ditemukan.</p>';
+   l.querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>detail(b.dataset.id));
+  }
+  function detail(id){
+   const e=D.find(v=>v.id===id);if(!e)return;
+   l.innerHTML='<div class="dbdetail"><button id="dbback">← Kembali</button><div class="dbtag">'+esc(e.category)+' / '+esc(e.material)+' / '+esc(e.submaterial)+'</div><h2>'+esc(e.title)+'</h2><p>'+esc(e.about)+'</p><h4>Siapa</h4><p>'+esc(e.who)+'</p><h4>Kapan</h4><p>'+esc(e.when)+'</p><h4>Dokumen / Persiapan</h4><ul>'+e.documents.map(v=>'<li>'+esc(v)+'</li>').join('')+'</ul><h4>Langkah</h4><ol>'+e.steps.map(v=>'<li>'+esc(v)+'</li>').join('')+'</ol><h4>Biaya</h4><p>'+esc(e.cost)+'</p><h4>Estimasi waktu</h4><p>'+esc(e.time)+'</p><h4>Kesalahan umum</h4><ul>'+e.mistakes.map(v=>'<li>'+esc(v)+'</li>').join('')+'</ul><h4>Sumber</h4>'+e.sources.map(s=>'<p><a target="_blank" rel="noopener" href="'+esc(s.url)+'">'+esc(s.label)+'</a></p>').join('')+'<p style="font-size:11px;color:var(--muted,#777)">Status: '+esc(e.verificationStatus)+'</p></div>';
+   x.querySelector("#dbback").onclick=()=>{l.innerHTML="";render()}; 
+  }
+  c.onchange=()=>{refreshM();render()};m.onchange=render;q.oninput=render;refreshM();render();x.scrollIntoView({behavior:"smooth"});
+ };
+})();
+</script>
 </body></html>
