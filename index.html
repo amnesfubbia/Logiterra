@@ -2202,6 +2202,34 @@
         .reel-video-wrap { inset: 0 0 auto 0; height: 64%; -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 100%); mask-image: linear-gradient(to bottom, #000 80%, transparent 100%); }
         .reel-video-wrap.streaming { -webkit-mask-image: none; mask-image: none; }
         .reel-slide::after { height: 42%; }
+
+        /* ===== RONDE 19: header yang menempel di atas ===== */
+        /* Modal pemeran: bar atas sudah dihapus, tab Film/Serial menempel di paling atas */
+        .actor-tab-nav { top: 0; }
+        /* Home: header (amnesfubbia + tombol) tetap di atas saat digulir */
+        #mainProfile .top-bar { position: fixed; top: var(--status-bar-height, 0px); left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 54px; box-sizing: border-box; margin-bottom: 0; padding: 0 15px; z-index: 200; align-items: center; }
+        #mainProfile .profile-header:not(.has-hero) { padding-top: 54px; }
+        #mainProfile .profile-header:not(.has-hero) .top-bar { background: #000; }
+        #mainProfile .top-bar.scrolled { background: #000 !important; border-bottom: 1px solid #1c1c1c; }
+        /* Tentang Aplikasi: nama, tagline & versi tetap menempel di bawah bar atas */
+        .about-hero { position: sticky; top: 54px; z-index: 99; padding: 14px 20px 12px; }
+        .about-app-tagline { margin-bottom: 10px; }
+        /* Pencarian & kalender: tab/tanggal menempel tepat di bawah header sesungguhnya */
+        #searchTypeTabs, #calendarHeader, #searchEmptyState > div[style*="position:sticky"] { top: var(--sh, 54px) !important; }
+
+        /* ===== RONDE 20 ===== */
+        /* Home: header benar-benar mentok ke atas (jarak status bar hanya untuk mode PWA) */
+        #mainProfile .top-bar { top: 0; height: 50px; }
+        body.pwa-mode #mainProfile .top-bar { top: var(--status-bar-height, 0px); }
+        #mainProfile .profile-header:not(.has-hero) { padding-top: 50px; }
+        /* Lanjut Tonton & Terakhir Dilihat: titik awal poster kiri sama (snap menghormati padding) */
+        #recentlyScroll, #continueWatchingScroll { scroll-padding-left: 15px; scroll-padding-right: 15px; }
+        /* Reels: tombol lebih rapat ke navigasi bawah; sisi atas video digelapkan & diburamkan menutupi tulisan YouTube */
+        .reel-action-buttons { padding: 8px 15px 6px; }
+        .reel-slide::before { height: 140px; background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.92) 38%, rgba(0,0,0,0.6) 72%, rgba(0,0,0,0) 100%); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 100%); mask-image: linear-gradient(to bottom, #000 70%, transparent 100%); }
+        .reel-video-wrap { -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 100%); mask-image: linear-gradient(to bottom, #000 68%, transparent 100%); }
+        .reel-video-wrap.streaming { -webkit-mask-image: none; mask-image: none; }
+        .reel-slide::after { height: 48%; }
     </style>
 </head>
 <body>
@@ -2637,7 +2665,7 @@
             <div style="max-width:520px;margin:0 auto;padding:20px 15px 60px">
                 <div style="position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;box-sizing:border-box;height:54px;margin:-20px -15px 12px;padding:0 15px;background:#000;border-bottom:1px solid #1c1c1c">
                     <i class="fa-solid fa-chevron-left btn-icon bk-none" onclick="_manualClose('decade', closeDecadeModal)"></i>
-                    <div style="font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff">Rating Tertinggi per Dekade</div>
+                    <div style="position:absolute;left:0;right:0;padding:0 56px;text-align:center;pointer-events:none;font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff">Rating Tertinggi per Dekade</div>
                 </div>
                 <!-- Decade + type selector -->
                 <div style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none" class="no-scrollbar" id="decadeTabRow"></div>
@@ -2720,7 +2748,7 @@
             <div style="max-width:520px;margin:0 auto;padding:0 15px 68px">
                 <div style="position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;box-sizing:border-box;height:54px;margin:0 -15px;padding:0 15px;background:#000;border-bottom:1px solid #1c1c1c">
                     <i class="fa-solid fa-chevron-left btn-icon bk-none" onclick="_manualClose('credits', () => closeCreditsModal(true))"></i>
-                    <div style="flex:1;min-width:0">
+                    <div style="position:absolute;left:0;right:0;padding:0 56px;text-align:center;pointer-events:none">
                         <div id="creditsTitle" style="font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
                         <div id="creditsSub" style="font-size:11px;color:#8e8e8e;margin-top:1px"></div>
                     </div>
@@ -2734,7 +2762,7 @@
             <div style="max-width:520px;margin:0 auto;padding:0 15px 68px">
                 <div style="position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;box-sizing:border-box;height:54px;margin:0 -15px;padding:0 15px;background:#000;border-bottom:1px solid #1c1c1c">
                     <i class="fa-solid fa-chevron-left btn-icon bk-none" onclick="_manualClose('awards', closeAwardsModal)"></i>
-                    <div style="flex:1;min-width:0;font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff;line-height:1.2">Penghargaan &amp; Festival</div>
+                    <div style="position:absolute;left:0;right:0;padding:0 56px;text-align:center;pointer-events:none;font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff;line-height:1.2">Penghargaan &amp; Festival</div>
                     <i class="fa-solid fa-award" style="color:#f5c518;font-size:18px"></i>
                 </div>
                 <div id="awardsChips" class="no-scrollbar" style="display:flex;gap:8px;overflow-x:auto;margin:12px -15px 0;padding:0 15px;scrollbar-width:none"></div>
@@ -3036,7 +3064,7 @@
         <div class="reels-topbar">
             <div style="display:flex;align-items:center;gap:10px;pointer-events:auto">
                 <i class="fa-solid fa-chevron-left reels-back-btn bk-none" onclick="_manualClose('reels', closeReels)" style="pointer-events:auto;font-size:20px"></i>
-                <span style="font-size:16px;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5);letter-spacing:-0.3px">Reels</span>
+                <span style="font-size:22px;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5);letter-spacing:-0.5px">Reels</span>
             </div>
             <div style="width:32px"></div>
         </div>
@@ -3467,7 +3495,7 @@
     <div id="livesportModal" style="display:none;position:fixed;inset:0;z-index:9700;background:#0a0a0a;flex-direction:column">
         <div style="display:flex;align-items:center;gap:10px;box-sizing:border-box;height:54px;padding:0 15px;background:#000;border-bottom:1px solid #1c1c1c;position:sticky;top:0;z-index:10">
             <i class="fa-solid fa-chevron-left btn-icon bk-none" onclick="closeLivesportModal()"></i>
-            <span style="font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff" id="livesportTitle">Live Sport</span>
+            <span style="position:absolute;left:0;right:0;padding:0 56px;text-align:center;pointer-events:none;font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff" id="livesportTitle">Live Sport</span>
         </div>
         <iframe id="livesportIframe" src="" style="flex:1;width:100%;border:none;display:block" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <nav class="bottom-nav" id="livesportBottomNav" style="position:sticky;bottom:0"></nav>
@@ -5366,6 +5394,9 @@
             const ntL = () => { if (window._notifTab !== 'tv') _notifRender('tv'); };
             const ntR = () => { if (window._notifTab === 'tv') _notifRender('movie'); };
             addSwipe(document.getElementById('notifModal'), ntL, ntR);
+
+            // ── PENGHARGAAN: geser kiri/kanan untuk pindah Oscar, Golden Globe, dst. ──
+            addSwipe(document.getElementById('awardsModal'), () => _awardsSwipe(1), () => _awardsSwipe(-1));
 
             // ── KARYA DIRECTOR / WRITER / STUDIO (tab Film / Serial) ──────
             const crL = () => { if (_creditsTab !== 'tv') _creditsRender('tv'); };
@@ -8626,6 +8657,7 @@
         }
 
         async function openComingSoon() {
+            try { _syncSearchSticky(); } catch (e) { _dbg('syncSticky', e); }
             calendarMediaType = 'movie'; // reset tiap buka
             // prefetch genre map movie+tv sekaligus agar tidak fetch saat ganti tab
             getGenreMap('movie'); getGenreMap('tv');
@@ -9391,6 +9423,7 @@
         }
 
         function openSearch() { 
+            try { setTimeout(_syncSearchSticky, 0); } catch (e) { _dbg('syncSticky', e); }
             closeModal(); closeD(); closeActorModal(); closeTvModal();
             if(document.getElementById('reelsModal').style.display === 'block') closeReels();
             if(document.getElementById('sideMenu').style.display === 'block') toggleSideMenu();
@@ -11621,6 +11654,17 @@
             });
         }
 
+        // Tinggi header pencarian dipakai sebagai posisi tempel tab/kalender di bawahnya
+        function _syncSearchSticky() {
+            const h = document.querySelector('#searchOverlay .search-header');
+            if (h && h.offsetHeight) document.documentElement.style.setProperty('--sh', h.offsetHeight + 'px');
+        }
+        // Header home tetap di atas saat digulir; jadi solid setelah melewati banner
+        window.addEventListener('scroll', () => {
+            const tb = document.querySelector('#mainProfile .top-bar');
+            if (tb) tb.classList.toggle('scrolled', window.scrollY > 40);
+        }, { passive: true });
+
         // ===== RIWAYAT TOMBOL BACK =====
         // Modal yang ditutup lewat tombol panah ikut membuang entri riwayat miliknya,
         // supaya tombol back HP tidak perlu ditekan dua kali.
@@ -11822,6 +11866,15 @@
         function _awCacheSet(key, rows) {
             if (!rows.length || rows.length > 700) return;
             try { localStorage.setItem('aw2:' + key, JSON.stringify({ t: Date.now(), rows })); } catch (e) { /* kuota penuh — abaikan */ }
+        }
+        function _awardsSwipe(d) {
+            const i = AWARD_CEREMONIES.findIndex(c => c.k === _awardsKey);
+            const base = i < 0 ? 0 : i;
+            const n = Math.min(AWARD_CEREMONIES.length - 1, Math.max(0, base + d));
+            if (n === i) return;
+            selectAward(AWARD_CEREMONIES[n].k);
+            const chip = document.getElementById('awChip-' + AWARD_CEREMONIES[n].k);
+            if (chip && chip.scrollIntoView) chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
         function openAwardsModal() {
             const m = document.getElementById('awardsModal');
@@ -12732,9 +12785,9 @@
 
     <!-- ===== PUSTAKA UNDUHAN ===== -->
     <div id="downloadLibModal" style="display:none;position:fixed;inset:0;z-index:9950;background:#000;flex-direction:column">
-        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:#000;border-bottom:1px solid #161616;flex-shrink:0">
+        <div style="position:relative;display:flex;align-items:center;gap:12px;padding:0 15px;height:54px;box-sizing:border-box;background:#000;border-bottom:1px solid #161616;flex-shrink:0">
             <i class="fa-solid fa-chevron-left btn-icon bk-none" onclick="closeDownloadLib()"></i>
-            <span style="font-size:17px;font-weight:800;color:#fff">Pustaka Unduhan</span>
+            <span style="position:absolute;left:0;right:0;padding:0 56px;text-align:center;pointer-events:none;font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff">Pustaka Unduhan</span>
             <span style="flex:1"></span>
             <i class="fa-solid fa-trash-can" style="color:#555;font-size:16px;cursor:pointer" onclick="clearDownloadLib()" title="Hapus semua"></i>
         </div>
@@ -12743,9 +12796,9 @@
 
     <!-- ===== PUSAT NOTIFIKASI RILIS ===== -->
     <div id="notifCenterModal" style="display:none;position:fixed;inset:0;z-index:9950;background:#000;flex-direction:column">
-        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:#000;border-bottom:1px solid #161616;flex-shrink:0">
+        <div style="position:relative;display:flex;align-items:center;gap:12px;padding:0 15px;height:54px;box-sizing:border-box;background:#000;border-bottom:1px solid #161616;flex-shrink:0">
             <i class="fa-solid fa-chevron-left btn-icon bk-none" onclick="closeNotifCenter()"></i>
-            <span style="font-size:17px;font-weight:800;color:#fff">Notifikasi Rilis</span>
+            <span style="position:absolute;left:0;right:0;padding:0 56px;text-align:center;pointer-events:none;font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff">Notifikasi Rilis</span>
             <span style="flex:1"></span>
             <i class="fa-solid fa-trash-can" style="color:#555;font-size:16px;cursor:pointer" onclick="clearReminders()" title="Hapus semua"></i>
         </div>
