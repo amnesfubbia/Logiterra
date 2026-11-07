@@ -2168,6 +2168,40 @@
         .reel-btn-watch, .reel-btn-detail { background: rgba(255,255,255,0.1); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
         #recentlyScroll, #continueWatchingScroll { gap: 10px; padding: 2px 15px 10px; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; touch-action: pan-x; }
         #recentlyViewedWrapper, #continueWatchingWrap { padding-left: 0; padding-right: 0; }
+
+        /* ===== RONDE 16: tombol aktif = hanya border putih (berlaku untuk semua warna aksen) ===== */
+        .genre-explore-chip.active, .decade-tab-chip.active, .mvg-sort-btn.active,
+        #filterBar .stat-item.active-stat, .ep-btn.active-pill {
+            background: rgba(255,255,255,0.05) !important; color: #fff !important; border-color: #fff !important;
+        }
+        /* Modal pemeran: bar atas (nama & titik tiga) dihapus — nama sudah ada di hero */
+        .actor-topbar { display: none; }
+        .actor-hero { padding-top: 36px; }
+        /* Movieografi: judul & nama di tengah, angka kanan atas dihapus */
+        .mvg-header { justify-content: center; text-align: center; }
+        .mvg-header .mvg-title { flex: none; text-align: center; }
+        .mvg-header .mvg-actor-name { text-align: center; }
+        #mvgCountBadge { display: none; }
+
+        /* ===== RONDE 17: Reels layar penuh (trailer memenuhi layar, info & tombol di atasnya) ===== */
+        .reel-bg { display: none; }
+        .reel-slide { justify-content: flex-end; }
+        .reel-slide::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 120px; z-index: 4; pointer-events: none; background: linear-gradient(to bottom, rgba(0,0,0,0.65), rgba(0,0,0,0)); }
+        .reel-slide::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 62%; z-index: 4; pointer-events: none; background: linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0) 100%); }
+        .reel-video-wrap { position: absolute; inset: 0; z-index: 0; width: auto; aspect-ratio: auto; flex-shrink: 1; }
+        .reel-video-wrap iframe { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 100%; width: auto; aspect-ratio: 16 / 9; min-width: 100%; }
+        .reel-header-text, .reel-desc-block, .reel-action-buttons { position: relative; z-index: 5; }
+        .reel-header-text { padding: 0 15px 6px; }
+        .reel-desc-block { flex: 0 0 auto; max-height: 96px; padding: 4px 15px 8px; }
+        .reel-action-buttons { padding: 8px 15px 14px; }
+        /* Saat streaming penuh diputar lewat tombol Tonton: kembali ke bingkai 16:9 di bawah bar atas */
+        .reel-video-wrap.streaming { inset: auto; top: 96px; left: 0; right: 0; aspect-ratio: 16 / 9; height: auto; z-index: 6; background: #000; }
+        .reel-video-wrap.streaming iframe { position: static; transform: none; width: 100%; height: 100%; aspect-ratio: auto; min-width: 0; }
+
+        /* ===== RONDE 18: Reels opsi campuran — video ±64% tinggi layar, memudar ke hitam, info di bawah ===== */
+        .reel-video-wrap { inset: 0 0 auto 0; height: 64%; -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 100%); mask-image: linear-gradient(to bottom, #000 80%, transparent 100%); }
+        .reel-video-wrap.streaming { -webkit-mask-image: none; mask-image: none; }
+        .reel-slide::after { height: 42%; }
     </style>
 </head>
 <body>
@@ -7131,6 +7165,35 @@
 
         // Helper: pastikan judul selalu Latin/English
         // Jika judul mengandung karakter non-Latin (Korea, Jepang, Arab, Hindi, Thai, dll), gunakan judul EN
+        // Nama Latin untuk orang: also_known_as → TMDb en-US → label Inggris di Wikidata (via ID TMDb). Hasil disimpan.
+        const _latinNameMem = {};
+        async function _latinPersonName(pid, name, aka) {
+            if (!isNonLatin(name || '')) return name;
+            if (_latinNameMem[pid]) return _latinNameMem[pid];
+            let store = {};
+            try { store = JSON.parse(localStorage.getItem('latinNames2') || '{}'); } catch (e) {}
+            if (store[pid]) { _latinNameMem[pid] = store[pid]; return store[pid]; }
+            const ok = n => n && !isNonLatin(n) && /[a-zA-Z]/.test(n);
+            let latin = '';
+            try {
+                const d = await fetchWithCache(`https://api.themoviedb.org/3/person/${pid}?api_key=${API_KEY}&language=en-US`);
+                latin = ok(d.name) ? d.name : ((d.also_known_as || []).find(ok) || '');
+            } catch (e) { _warn('latinPersonName', e); }
+            if (!latin) latin = (aka || []).find(ok) || '';
+            if (!latin) {
+                try {
+                    const rows = await _wdRun(`SELECT ?l WHERE { ?p wdt:P4985 "${pid}". ?p rdfs:label ?l. FILTER(LANG(?l) = "en") } LIMIT 1`, 7000, 0);
+                    const l = rows[0] && rows[0].l ? rows[0].l.value : '';
+                    if (ok(l)) latin = l;
+                } catch (e) { _warn('latinPersonName wd', e); }
+            }
+            if (latin) {
+                _latinNameMem[pid] = latin;
+                try { store[pid] = latin; const keys = Object.keys(store); if (keys.length > 600) delete store[keys[0]]; localStorage.setItem('latinNames2', JSON.stringify(store)); } catch (e) {}
+                return latin;
+            }
+            return name;
+        }
         function isNonLatin(str) {
             return /[\u0900-\u097F\u0600-\u06FF\u0E00-\u0E7F\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7FF\u0400-\u04FF\u0370-\u03FF]/.test(str || '');
         }
@@ -7206,12 +7269,7 @@
                 document.getElementById('actorCoverBlur').classList.add('is-portrait'); // cadangan: foto diburamkan
 
                 // Nama aktor — gunakan Latin dari also_known_as jika nama asli non-Latin
-                let actorDisplayName = details.name;
-                if (isNonLatin(details.name)) {
-                    const aka = details.also_known_as || [];
-                    const latinName = aka.find(n => n && !isNonLatin(n));
-                    if (latinName) actorDisplayName = latinName;
-                }
+                const actorDisplayName = await _latinPersonName(actorId, details.name, details.also_known_as);
                 document.getElementById('actorHeaderTitle').innerText = actorDisplayName;
                 document.getElementById('actorName').innerText = actorDisplayName;
                 document.getElementById('actorNameBio').innerText = actorDisplayName;
@@ -7689,7 +7747,6 @@
                     const synTransId = `reel-trans-${reel.movieId}`;
 
                     slide.innerHTML = `
-                        ${reel.poster ? `<div class="reel-bg" style="background-image:url('https://image.tmdb.org/t/p/w342${reel.poster}')"></div>` : ''}
                         <div class="reel-header-text">
                             <div class="reel-title">${reel.title}</div>
                             <div class="reel-meta-inline">
@@ -8793,12 +8850,7 @@
                 ]);
 
                 // Nama aktor
-                let name = details.name;
-                if (isNonLatin(name)) {
-                    const aka = details.also_known_as || [];
-                    const latin = aka.find(n => n && !isNonLatin(n));
-                    if (latin) name = latin;
-                }
+                const name = await _latinPersonName(actorId, details.name, details.also_known_as);
                 document.getElementById('mvgActorName').innerText = name;
 
                 // Filter unique credits with poster
@@ -9173,6 +9225,9 @@
                             <div class="card-meta-row"><span class="card-type-label">${dept}</span></div>
                             ${knownFor ? `<div style="font-size:9px;color:#aaa;margin-top:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${knownFor}</div>` : ''}
                         </div>`;
+                    if (isNonLatin(m.name || '')) {
+                        _latinPersonName(m.id, m.name, null).then(n => { const t = card.querySelector('.card-title-text'); if (t && n) t.textContent = n; });
+                    }
                     fragment.appendChild(card);
                     return;
                 }
@@ -9850,6 +9905,7 @@
                         if (latinAka) displayName = latinAka;
                     }
                 } catch (_e) { _warn('normalizeTitle', _e); }
+                if (isNonLatin(displayName)) displayName = await _latinPersonName(c.id, displayName);
                 return `<div class="cast-item" onclick="openActorProfile(${c.id})"><div class="cast-img-border"><div class="inner-border">${profileImg}</div></div><span class="cast-name">${displayName}</span>${charName ? `<span style="font-size:8px;color:#555;display:block;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:65px">${charName}</span>` : ''}</div>`;
             }));
             document.getElementById('castContainer').innerHTML = castItems.join('');
@@ -9916,17 +9972,9 @@
                 const miRevenue = (type === 'movie' && dId.revenue && dId.revenue > 0) ? '$' + dId.revenue.toLocaleString('en-US') : (type === 'tv' ? '—' : '—');
                 // Director / Writer / Studio bisa diklik → buka daftar karya lainnya
                 const _personLink = (pid, nm, kind) => pid ? `<span class="minfo-link" data-n="${_escAttr(nm)}" onclick="openCreditsPerson(${pid}, this.dataset.n, '${kind}')">${nm}</span>` : nm;
-                const _latinPerson = async (pid, nm) => {
-                    if (!isNonLatin(nm)) return nm;
-                    try {
-                        const pd = await fetchWithCache(`https://api.themoviedb.org/3/person/${pid}?api_key=${API_KEY}&language=en-US`);
-                        const l = (pd.also_known_as || []).find(n => n && !isNonLatin(n));
-                        if (l) return l;
-                        if (pd.name && !isNonLatin(pd.name)) return pd.name;
-                    } catch (_e) { _warn('latinPerson', _e); }
-                    return nm;
-                };
+                const _latinPerson = (pid, nm) => _latinPersonName(pid, nm);
                 const _dirId = miDir ? miDir.id : ((type === 'tv' && dId.created_by && dId.created_by[0]) ? dId.created_by[0].id : null);
+                if (miDirName !== '—' && isNonLatin(miDirName) && _dirId) miDirName = await _latinPersonName(_dirId, miDirName);
                 const miDirHTML = miDirName !== '—' ? _personLink(_dirId, miDirName, 'director') : miDirName;
                 const _wSrc = miWriters.length ? miWriters : ((type === 'tv' && dId.created_by) ? dId.created_by : []);
                 const _wUniq = []; const _wSeen = new Set();
@@ -12395,6 +12443,15 @@
             if (wrap) wrap.style.display = 'none';
             showToast('Lanjut Tonton dibersihkan');
         }
+        // Hapus satu entri Lanjut Tonton
+        function deleteResumeOne(id) {
+            try {
+                const rd = getResumeData();
+                delete rd[id];
+                localStorage.setItem(RESUME_KEY, JSON.stringify(rd));
+            } catch (e) { _warn('deleteResumeOne', e); }
+            renderContinueWatching();
+        }
         // Ambil judul latin (huruf alfabet) — non-Latin diterjemahkan ke judul EN bila ada
         async function _latinTitle(type, id, current) {
             if (!isNonLatin(current || '')) return current || 'Judul';
@@ -12461,6 +12518,7 @@
                     <div style="position:absolute;top:8px;left:10px;font-size:8px;font-weight:800;letter-spacing:0.5px;color:#fff;background:rgba(0,0,0,0.55);padding:3px 8px;border-radius:8px;text-transform:uppercase">${c.label}</div>
                     <div style="position:absolute;left:10px;right:44px;bottom:12px;font-size:12px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.d.title}</div>
                     <div style="position:absolute;right:12px;bottom:10px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.92);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.5)"><i class="fa-solid fa-play" style="color:#111;font-size:11px;margin-left:1px"></i></div>
+                    <div class="recently-del" style="top:8px;right:8px" onclick="event.stopPropagation(); deleteResumeOne('${c.id}')"><i class="fa-solid fa-xmark"></i></div>
                     <div style="position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,0.2)"><div style="height:100%;width:${c.pct}%;background:var(--accent,#1a73e8)"></div></div>
                 </div>`;
             }).join('');
