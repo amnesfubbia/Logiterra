@@ -2230,6 +2230,25 @@
         .reel-video-wrap { -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 100%); mask-image: linear-gradient(to bottom, #000 68%, transparent 100%); }
         .reel-video-wrap.streaming { -webkit-mask-image: none; mask-image: none; }
         .reel-slide::after { height: 48%; }
+
+        /* ===== RONDE 21 ===== */
+        /* Reels: tutupan hitam di atas video dipertipis; tombol rapat ke navigasi bawah */
+        .reel-slide::before { height: 88px; background: linear-gradient(to bottom, #000 0%, #000 34px, rgba(0,0,0,0.7) 58px, rgba(0,0,0,0) 100%); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%); mask-image: linear-gradient(to bottom, #000 72%, transparent 100%); }
+        .reel-action-buttons { padding: 8px 15px 2px; }
+
+        /* ===== RONDE 22 ===== */
+        /* Terakhir Dilihat dihapus */
+        #recentlyViewedWrapper { display: none !important; }
+        /* Modal film: bar judul atas dihapus (judul sudah ada di bawah bingkai video) — kecuali mode Live TV */
+        #movieModal:not(.tv-mode) #mHeaderBar { display: none; }
+        /* Reels: tinggi mengikuti kontainer tetap (di atas navigasi 52px), bukan satuan svh yang berubah saat bar browser muncul/hilang */
+        .reels-container { position: absolute; top: 0; left: 0; right: 0; bottom: 52px; height: auto; }
+        .reel-slide { height: 100%; min-height: 0; }
+        /* Reels: tutupan hitam atas dinaikkan & dipertipis, bawah diturunkan & dipertipis */
+        .reel-slide::before { top: -6px; height: 72px; background: linear-gradient(to bottom, #000 0%, #000 22px, rgba(0,0,0,0.65) 46px, rgba(0,0,0,0) 100%); }
+        .reel-slide::after { height: 40%; }
+        .reel-video-wrap { -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); }
+        .reel-video-wrap.streaming { -webkit-mask-image: none; mask-image: none; }
     </style>
 </head>
 <body>
@@ -2663,16 +2682,19 @@
         <!-- Decade modal (triggered by filter btn when idle) -->
         <div id="decadeModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);overflow-y:auto">
             <div style="max-width:520px;margin:0 auto;padding:20px 15px 60px">
-                <div style="position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;box-sizing:border-box;height:54px;margin:-20px -15px 12px;padding:0 15px;background:#000;border-bottom:1px solid #1c1c1c">
+                <div style="position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;box-sizing:border-box;height:54px;margin:-20px -15px 0;padding:0 15px;background:#000;border-bottom:1px solid #1c1c1c">
                     <i class="fa-solid fa-chevron-left btn-icon bk-none" onclick="_manualClose('decade', closeDecadeModal)"></i>
                     <div style="position:absolute;left:0;right:0;padding:0 56px;text-align:center;pointer-events:none;font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff">Rating Tertinggi per Dekade</div>
                 </div>
                 <!-- Decade + type selector -->
-                <div style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none" class="no-scrollbar" id="decadeTabRow"></div>
-                <div style="display:flex;border-bottom:1px solid #1a1a1a;margin-bottom:12px">
-                    <div id="dcTypeMovie" class="decade-type-btn active" onclick="selectDecadeType('movie',this)">Film</div>
-                    <div id="dcTypeTV" class="decade-type-btn" onclick="selectDecadeType('tv',this)">Serial</div>
+                <div id="dcSticky" style="position:sticky;top:54px;z-index:4;background:#000;margin:0 -15px;padding:12px 15px 0">
+                    <div style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none" class="no-scrollbar" id="decadeTabRow"></div>
+                    <div style="display:flex;border-bottom:1px solid #1a1a1a;margin-bottom:0">
+                        <div id="dcTypeMovie" class="decade-type-btn active" onclick="selectDecadeType('movie',this)">Film</div>
+                        <div id="dcTypeTV" class="decade-type-btn" onclick="selectDecadeType('tv',this)">Serial</div>
+                    </div>
                 </div>
+                <div style="height:12px"></div>
                 <div id="decadeGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
             </div>
         </div>
@@ -2788,7 +2810,7 @@
         </div>
         <div id="modalScrollTop" class="max-w-xl mx-auto pb-20">
             <div class="sticky top-0 bg-black z-[100] border-b border-zinc-900">
-                <div class="h-[54px] flex items-center" style="padding:0 15px;gap:10px">
+                <div id="mHeaderBar" class="h-[54px] flex items-center" style="padding:0 15px;gap:10px">
                     <i class="fa-solid fa-chevron-left btn-icon bk-ghost" onclick="_manualClose('modal', closeModal)"></i>
                     <div class="flex-grow text-center text-[14px] font-extrabold truncate" style="letter-spacing:-0.3px" id="mTitle"></div>
                     <div style="width:32px;flex-shrink:0"></div>
@@ -11164,6 +11186,7 @@
         const RV_MAX = 20;
 
         function addToRecentlyViewed(id, type, poster) {
+            return; // fitur Terakhir Dilihat dihapus
             let items = JSON.parse(localStorage.getItem(RV_KEY) || '[]');
             items = items.filter(x => x.id != id);
             items.unshift({ id, type, poster });
@@ -11173,6 +11196,7 @@
         }
 
         function renderRecentlyViewed() {
+            { const _w = document.getElementById('recentlyViewedWrapper'); if (_w) _w.style.display = 'none'; return; } // fitur Terakhir Dilihat dihapus
             const items = JSON.parse(localStorage.getItem(RV_KEY) || '[]');
             const wrapper = document.getElementById('recentlyViewedWrapper');
             const scroll = document.getElementById('recentlyScroll');
