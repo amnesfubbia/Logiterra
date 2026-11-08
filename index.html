@@ -2249,6 +2249,15 @@
         .reel-slide::after { height: 40%; }
         .reel-video-wrap { -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); }
         .reel-video-wrap.streaming { -webkit-mask-image: none; mask-image: none; }
+
+        /* ===== RONDE 23: keseragaman modal (Film Baru, Pencarian, Penghargaan, Kalender, Rating per Dekade) =====
+           Header 54px; judul 16px/800 di tengah; tab 12px/700 garis bawah putih; chip 12px/700 setinggi 30px;
+           jarak samping 15px; header/tab → konten 12px; padding bawah 68px. */
+        .search-header { height: 54px; box-sizing: border-box; padding: 0 15px; }
+        #searchTypeTabs { border-bottom-color: #1a1a1a !important; }
+        .decade-tab-chip, .genre-explore-chip { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 20px; font-size: 12px; font-weight: 700; box-sizing: border-box; }
+        /* Reels: judul–sinopsis dinaikkan mendekati video (tombol tetap di atas navigasi) */
+        .reel-desc-block { margin-bottom: 16px; }
     </style>
 </head>
 <body>
@@ -2733,7 +2742,7 @@
         <div class="w-12 h-1 bg-zinc-800 rounded-full mx-auto mt-3 mb-6"></div>
         <div class="px-5">
             <h3 class="text-[10px] font-black uppercase tracking-[4px] mb-8 text-center text-zinc-500">
-                Official Soundtrack
+                Soundtrack Resmi
             </h3>
             <div id="musicList" class="space-y-3 pb-12"></div>
         </div>
@@ -7308,7 +7317,8 @@
             document.getElementById('actorKnownFor').innerHTML = '';
             switchActorTab('grid');
 
-            history.pushState({view: 'actor'}, "");
+            if (history.state && history.state.view === 'actor') history.replaceState({view: 'actor'}, "");
+            else history.pushState({view: 'actor'}, "");
 
             try {
                 const [details, credits] = await Promise.all([
@@ -8694,7 +8704,8 @@
             document.getElementById('searchGrid').innerHTML = '<div id="calendarList" class="col-span-3"></div>';
             calendarHeader.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            history.pushState({view: 'search'}, "");
+            if (history.state && history.state.view === 'search') history.replaceState({view: 'search'}, "");
+            else history.pushState({view: 'search'}, "");
 
             // Build tab + date strip
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -9461,7 +9472,8 @@
             // Tidak auto-focus agar keyboard tidak langsung muncul
             document.body.style.overflow = 'hidden';
             updateActiveNav('search');
-            history.pushState({view: 'search'}, "");
+            if (history.state && history.state.view === 'search') history.replaceState({view: 'search'}, "");
+            else history.pushState({view: 'search'}, "");
         }
 
         function closeSearch() { 
@@ -9755,7 +9767,8 @@
             // tampilkan controls sebentar lalu auto-hide
             setTimeout(() => showVideoControls(), 500);
             
-            history.pushState({view: 'modal'}, "");
+            if (history.state && history.state.view === 'modal') history.replaceState({view: 'modal'}, ""); // buka judul lain dari dalam modal: tidak menambah entri riwayat
+            else history.pushState({view: 'modal'}, "");
 
             const [dId, dEn, dCast, dExt] = await Promise.all([
                 fetchWithCache(`https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}&language=id-ID&append_to_response=videos,production_companies&include_video_language=en,id,hi,th,ko,ja,ru,null`),
@@ -10386,8 +10399,9 @@
             document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active-link'));
             if(srvIdx !== 99) el.classList.add('active-link');
             // Simpan progres episode untuk fitur lanjut tonton (kecuali mode trailer)
-            if (window.currentMediaType === 'tv' && srvIdx !== 99) {
-                saveResume(window.currentMediaId, { s: activeSeason, e: activeEpisode });
+            if (srvIdx !== 99) {
+                if (window.currentMediaType === 'tv') saveResume(window.currentMediaId, { s: activeSeason, e: activeEpisode });
+                else saveResume(window.currentMediaId, {}); // film: catat saat mulai diputar agar muncul di Lanjut Tonton
             }
             const url = buildEmbedUrl(window.currentMediaType, window.currentMediaId, activeSeason, activeEpisode, activeServerIdx);
             playVid(url);
@@ -11690,6 +11704,24 @@
         }, { passive: true });
 
         // ===== RIWAYAT TOMBOL BACK =====
+        // Pembersih entri riwayat usang: bila setelah back, entri tujuan milik layar yang sudah tertutup,
+        // mundur lagi otomatis (tanpa menutup layar lain), sehingga back HP tidak perlu ditekan dua kali.
+        const _STALE_MAP = { modal: 'movieModal', actor: 'actorModal', search: 'searchOverlay', tv: 'tvModal', reels: 'reelsModal', movieografi: 'movieografiModal', notif: 'notifModal', decade: 'decadeModal', credits: 'creditsModal', awards: 'awardsModal', dlLib: 'downloadLibModal', notifCenter: 'notifCenterModal', actorPhotos: 'actorPhotosModal', soundtrack: 'soundtrackModal', lightbox: 'lightboxModal', livesport: 'livesportModal' };
+        let _staleSkips = 0;
+        window.addEventListener('popstate', function (e) {
+            const v = e.state && e.state.view;
+            if (!v) { _staleSkips = 0; return; }
+            setTimeout(() => {
+                if (document.querySelector('.app-ov')) return;
+                const id = _STALE_MAP[v];
+                const el = id ? document.getElementById(id) : null;
+                if (!id || !el || getComputedStyle(el).display !== 'none' || _staleSkips >= 6) { _staleSkips = 0; return; }
+                _staleSkips++;
+                _ignorePopUntil = Date.now() + 400;
+                history.back();
+            }, 40);
+        });
+
         // Modal yang ditutup lewat tombol panah ikut membuang entri riwayat miliknya,
         // supaya tombol back HP tidak perlu ditekan dua kali.
         let _ignorePopUntil = 0;
