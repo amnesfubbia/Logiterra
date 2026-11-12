@@ -3417,6 +3417,7 @@
                         <i class="fa-solid fa-play" style="color:#fff;font-size:18px;margin-left:2px"></i>
                     </div>
                 </div>
+                <div id="musicArtistAbout" style="display:none;padding:20px 15px 0"></div>
                 <div style="padding:24px 0 0">
                     <div style="padding:0 15px 12px"><span style="font-size:15px;font-weight:800;color:#fff">Lagu Populer</span></div>
                     <div id="musicArtistSongs"></div>
@@ -4358,13 +4359,19 @@
             document.getElementById('musicArtistBg').style.backgroundImage = '';
             document.getElementById('musicArtistSongs').innerHTML = musicSkeletonListRows(5);
             document.getElementById('musicArtistAlbums').innerHTML = musicSkeletonCards(4);
+            { const _ab = document.getElementById('musicArtistAbout'); if (_ab) { _ab.style.display = 'none'; _ab.innerHTML = ''; } }
             try {
                 const [songRes, albumRes] = await Promise.all([
                     fetch(`${ITUNES_API}/lookup?id=${artistId}&entity=song&limit=15`).then(r => r.json()),
-                    fetch(`${ITUNES_API}/lookup?id=${artistId}&entity=album&limit=12`).then(r => r.json()),
+                    fetch(`${ITUNES_API}/lookup?id=${artistId}&entity=album&limit=50`).then(r => r.json()),
                 ]);
                 const songs = (songRes.results || []).filter(t => t.wrapperType === 'track' && t.trackId).map(musicNormalize);
-                const albums = (albumRes.results || []).filter(a => a.wrapperType === 'collection' && a.collectionId);
+                const _seenAlb = new Set();
+                const albums = (albumRes.results || []).filter(a => a.wrapperType === 'collection' && a.collectionId)
+                    .filter(a => { const k = (a.collectionName || '').toLowerCase().replace(/\s*[\(\[].*?[\)\]]\s*/g, '').trim(); if (_seenAlb.has(k)) return false; _seenAlb.add(k); return true; })
+                    .sort((x, y) => String(y.releaseDate || '').localeCompare(String(x.releaseDate || '')))
+                    .slice(0, 30);
+                _musicLoadArtistAbout(artistName, albums);
                 _musicArtistSongs = songs;
                 if (songs.length && songs[0].artwork) {
                     const bg = document.getElementById('musicArtistBg');
@@ -4384,12 +4391,71 @@
                                 <img src="${(a.artworkUrl100||'').replace('100x100','600x600')}" loading="lazy" onerror="musicImgFallback(this)" style="width:100%;height:100%;object-fit:cover">
                             </div>
                             <div style="margin-top:7px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.collectionName||''}</div>
+                            <div style="font-size:11px;color:#777;margin-top:2px">${(a.releaseDate || '').slice(0, 4)}${a.trackCount ? ' · ' + a.trackCount + ' lagu' : ''}</div>
                         </div>`).join('')
                     : '<div style="color:#444;font-size:12px;padding:0 4px">Album tidak ditemukan</div>';
             } catch(e) {
                 document.getElementById('musicArtistSongs').innerHTML = '<div style="text-align:center;padding:20px;color:#444;font-size:12px">Gagal memuat</div>';
                 document.getElementById('musicArtistAlbums').innerHTML = '';
             }
+        }
+        // Keterangan singkat artis/band: Wikipedia (Indonesia dulu, lalu Inggris) — hanya dipakai bila halamannya memang tentang musisi
+        async function _wikiArtistSummary(name) {
+            const MUSIC = { id: /(penyanyi|band|grup musik|musisi|vokalis|rapper|duo|trio|kelompok musik|penulis lagu|pencipta lagu|diva|biduan|disjoki|musik)/i, en: /(singer|band|musician|rapper|group|songwriter|vocalist|duo|trio|disc jockey|music)/i };
+            const norm = t => String(t || '').toLowerCase().replace(/\(.*?\)/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+            const target = norm(name);
+            if (!target) return null;
+            for (const lang of ['id', 'en']) {
+                try {
+                    const q = encodeURIComponent(name + (lang === 'id' ? ' musisi OR band OR penyanyi' : ' musician OR band OR singer'));
+                    const sr = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${q}&srlimit=4&format=json&origin=*`).then(r => r.json());
+                    for (const h of ((sr.query && sr.query.search) || [])) {
+                        const tn = norm(h.title);
+                        if (!(tn === target || tn.startsWith(target + ' ') || target.startsWith(tn + ' '))) continue;
+                        const sm = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(h.title)}`).then(r => r.json());
+                        const ex = sm.extract || '';
+                        if (ex.length > 60 && MUSIC[lang].test(ex)) return { text: ex, lang, url: (sm.content_urls && sm.content_urls.desktop && sm.content_urls.desktop.page) || '' };
+                    }
+                } catch (e) { _warn('wikiArtist', e); }
+            }
+            return null;
+        }
+        async function _musicLoadArtistAbout(name, albums) {
+            const box = document.getElementById('musicArtistAbout');
+            if (!box) return;
+            const genre = (albums[0] && albums[0].primaryGenreName) || '';
+            const meta = [genre, albums.length ? albums.length + ' album' : ''].filter(Boolean).join(' · ');
+            let info = null;
+            try { info = await _wikiArtistSummary(name); } catch (e) { _warn('musicAbout', e); }
+            if (document.getElementById('musicArtistName').textContent !== name && name) return; // sudah pindah artis
+            if (!info && !meta) { box.style.display = 'none'; return; }
+            box.style.display = 'block';
+            box.innerHTML = `<div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:8px">Tentang</div>
+                ${meta ? `<div style="font-size:11px;color:#777;margin-bottom:8px">${meta}</div>` : ''}
+                <div id="musicAboutText" style="font-size:12.5px;line-height:1.55;color:#bbb"></div>
+                <div id="musicAboutActions" style="display:flex;gap:14px;margin-top:6px;flex-wrap:wrap"></div>`;
+            const txt = document.getElementById('musicAboutText'), act = document.getElementById('musicAboutActions');
+            if (!info) { txt.innerText = 'Belum ada keterangan tentang artis ini.'; return; }
+            const st = { orig: info.text, trans: '', showTrans: false, expanded: false };
+            const view = () => {
+                const t = st.showTrans ? st.trans : st.orig;
+                const long = t.length > 180;
+                txt.innerText = (!st.expanded && long) ? t.substring(0, 180).trim() + '...' : t;
+                act.innerHTML = '';
+                const mk = (label, fn) => { const b = document.createElement('span'); b.className = 'toggle-btn'; b.innerText = label; b.onclick = fn; act.appendChild(b); return b; };
+                if (info.lang === 'en') {
+                    const tb = mk(st.showTrans ? 'Lihat asli' : 'Lihat terjemahan', async () => {
+                        if (st.showTrans) { st.showTrans = false; view(); return; }
+                        if (st.trans) { st.showTrans = true; view(); return; }
+                        tb.innerText = 'Menerjemahkan...';
+                        try { st.trans = await translateTextChunked(st.orig, 'en', 'id'); st.showTrans = true; view(); }
+                        catch (e) { _warn('aboutTranslate', e); tb.innerText = 'Gagal menerjemahkan'; }
+                    });
+                }
+                if (long) mk(st.expanded ? 'ringkas' : 'selengkapnya', () => { st.expanded = !st.expanded; view(); });
+                if (info.url) { const a = document.createElement('a'); a.href = info.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.className = 'toggle-btn'; a.innerText = 'Wikipedia'; act.appendChild(a); }
+            };
+            view();
         }
         function musicCloseArtistProfile() {
             document.getElementById('musicArtistProfile').style.display = 'none';
