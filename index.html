@@ -3346,13 +3346,14 @@
         <!-- ===== PROFILE TAB ===== -->
         <!-- ===== PLAYLIST DETAIL SCREEN ===== -->
         <div id="musicPlaylistDetail" style="display:none;position:absolute;top:0;left:0;right:0;bottom:62px;z-index:30;background:#000;flex-direction:column;overflow:hidden">
-            <div style="flex:1;overflow-y:auto;padding-bottom:160px">
-                <div style="position:relative;height:220px;background:#141414">
-                    <div id="musicPlDetailArt" style="position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(0.55)"></div>
-                    <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.3),#000 95%)"></div>
-                    <div style="position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between">
+            <div style="flex:1;overflow-y:auto;padding-bottom:80px">
+                <div id="musicPlDetailHero" style="position:relative;padding:56px 0 20px;background:linear-gradient(to bottom,#2a2a2a,#000)">
+                    <div style="position:absolute;top:16px;left:15px;right:15px;display:flex;justify-content:space-between">
                         <i class="fa-solid fa-chevron-left btn-icon bk-ghost" onclick="musicClosePlaylistDetail()"></i>
                         <i class="fa-solid fa-ellipsis" style="font-size:18px;color:#fff;cursor:pointer;padding:6px"></i>
+                    </div>
+                    <div style="display:flex;justify-content:center">
+                        <div id="musicPlDetailArt" style="width:200px;height:200px;border-radius:12px;background-color:#1a1a1a;background-size:cover;background-position:center;box-shadow:0 14px 36px rgba(0,0,0,0.65)"></div>
                     </div>
                 </div>
                 <div style="padding:14px 15px 0">
@@ -3361,19 +3362,19 @@
                     <div id="musicPlDetailMeta" style="font-size:11px;color:#555;margin-top:2px"></div>
                     <div style="display:flex;align-items:center;gap:12px;margin-top:16px">
                         <div onclick="musicPlayPlaylistDetail()" style="width:48px;height:48px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
-                            <i class="fa-solid fa-play" style="color:#fff;font-size:18px;margin-left:2px"></i>
+                            <i class="fa-solid fa-play" style="color:#000;font-size:18px;margin-left:2px"></i>
                         </div>
                         <i class="fa-solid fa-shuffle" style="color:#666;font-size:18px;cursor:pointer;padding:8px" onclick="musicToggleShuffle()"></i>
                         <i class="fa-solid fa-download" style="color:#666;font-size:18px;cursor:pointer;padding:8px"></i>
                     </div>
                 </div>
-                <div id="musicPlDetailList" style="padding:16px 8px 0"></div>
+                <div id="musicPlDetailList" style="padding:12px 0 0"></div>
             </div>
         </div>
 
         <!-- ===== ALBUM DETAIL SCREEN ===== -->
         <div id="musicAlbumDetail" style="display:none;position:absolute;top:0;left:0;right:0;bottom:62px;z-index:30;background:#000;flex-direction:column;overflow:hidden">
-            <div style="flex:1;overflow-y:auto;padding-bottom:160px">
+            <div style="flex:1;overflow-y:auto;padding-bottom:80px">
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 15px 0">
                     <i class="fa-solid fa-chevron-left btn-icon bk-ghost" onclick="musicCloseAlbumDetail()"></i>
                     <i id="musicAlbumLikeBtn" class="fa-regular fa-heart" style="font-size:19px;color:#666;cursor:pointer;padding:6px" onclick="musicToggleAlbumLike()"></i>
@@ -3385,7 +3386,7 @@
                     <div id="musicAlbumMeta" style="font-size:11px;color:#555;margin-top:2px"></div>
                     <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:16px">
                         <div onclick="musicPlayAlbumDetail()" style="width:48px;height:48px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
-                            <i class="fa-solid fa-play" style="color:#fff;font-size:18px;margin-left:2px"></i>
+                            <i class="fa-solid fa-play" style="color:#000;font-size:18px;margin-left:2px"></i>
                         </div>
                         <i class="fa-solid fa-shuffle" style="color:#666;font-size:18px;cursor:pointer;padding:8px" onclick="musicToggleShuffle()"></i>
                         <i class="fa-solid fa-download" style="color:#666;font-size:18px;cursor:pointer;padding:8px"></i>
@@ -3398,7 +3399,7 @@
 
         <!-- ===== ARTIST PROFILE SCREEN ===== -->
         <div id="musicArtistProfile" style="display:none;position:absolute;top:0;left:0;right:0;bottom:62px;z-index:30;background:#000;flex-direction:column;overflow:hidden">
-            <div style="flex:1;overflow-y:auto;padding-bottom:160px">
+            <div style="flex:1;overflow-y:auto;padding-bottom:80px">
                 <div style="position:relative;height:230px;background:#141414">
                     <div id="musicArtistBg" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#222,#111)">
                         <i class="fa-solid fa-user-music" style="font-size:56px;color:#333"></i>
@@ -3410,11 +3411,6 @@
                     <div style="position:absolute;bottom:14px;left:20px;right:20px">
                         <div id="musicArtistName" style="font-size:22px;font-weight:900;color:#fff"></div>
                         <div style="font-size:11px;color:#999;margin-top:2px">Artis</div>
-                    </div>
-                </div>
-                <div style="padding:14px 15px 0">
-                    <div onclick="musicPlayArtistTop()" style="width:48px;height:48px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
-                        <i class="fa-solid fa-play" style="color:#fff;font-size:18px;margin-left:2px"></i>
                     </div>
                 </div>
                 <div id="musicArtistAbout" style="display:none;padding:20px 15px 0"></div>
@@ -4137,15 +4133,24 @@
             document.getElementById('musicPlDetailTitle').textContent = p.title;
             document.getElementById('musicPlDetailMeta').textContent = 'Memuat...';
             document.getElementById('musicPlDetailArt').style.backgroundImage = '';
+            { const _hr = document.getElementById('musicPlDetailHero'); if (_hr) _hr.style.background = 'linear-gradient(to bottom,#2a2a2a,#000)'; }
             document.getElementById('musicPlDetailList').innerHTML = musicSkeletonListRows(6);
             try {
                 const raw = await musicFetchPlaylistTracks(p, 6);
                 const tracks = raw.filter(t => t.trackId).map(musicNormalize);
                 _musicPlaylistDetail = { id:p.id, title:p.title, tracks };
-                if (tracks[0]) document.getElementById('musicPlDetailArt').style.backgroundImage = `url(${tracks[0].artwork})`;
-                document.getElementById('musicPlDetailMeta').textContent = `${tracks.length} lagu`;
+                if (tracks[0]) {
+                    document.getElementById('musicPlDetailArt').style.backgroundImage = `url(${tracks[0].artwork})`;
+                    _musicCoverColor(tracks[0].artwork).then(c => {
+                        const hero = document.getElementById('musicPlDetailHero');
+                        if (c && hero && _musicPlaylistDetail && _musicPlaylistDetail.id === p.id) hero.style.background = `linear-gradient(to bottom, rgb(${Math.round(c[0] * 0.7)},${Math.round(c[1] * 0.7)},${Math.round(c[2] * 0.7)}) 0%, #000 100%)`;
+                    });
+                }
+                const _tot = tracks.reduce((a, t) => a + (t.duration || 0), 0);
+                const _h = Math.floor(_tot / 3600), _m = Math.floor((_tot % 3600) / 60);
+                document.getElementById('musicPlDetailMeta').textContent = `${tracks.length} lagu${_tot ? ' · ' + (_h ? _h + ' j ' : '') + _m + ' mnt' : ''}`;
                 document.getElementById('musicPlDetailList').innerHTML = tracks.length
-                    ? tracks.map((t,i) => musicListItemHTML(t,i).replace(`musicPlayFromQueue(${i})`, `musicPlayPlaylistDetailAt(${i})`)).join('')
+                    ? tracks.map((t,i) => musicPlaylistRowHTML(t, i, `musicPlayPlaylistDetailAt(${i})`)).join('')
                     : '<div style="text-align:center;padding:40px 15px;color:#444">Lagu tidak ditemukan</div>';
             } catch(e) {
                 document.getElementById('musicPlDetailMeta').textContent = '';
@@ -4310,40 +4315,78 @@
             const el = document.getElementById('musicSearchResults');
             el.innerHTML = `<div style="text-align:center;padding:50px 15px;color:#444"><i class="fa-solid fa-compact-disc fa-spin" style="font-size:28px;color:#fff;margin-bottom:12px;display:block"></i>Mencari...</div>`;
             try {
-                const [trackRes, artistRes] = await Promise.all([
-                    fetch(`${ITUNES_API}/search?term=${encodeURIComponent(q)}&media=music&country=ID&lang=id_id&limit=30`).then(r => r.json()),
-                    fetch(`${ITUNES_API}/search?term=${encodeURIComponent(q)}&entity=musicArtist&country=ID&lang=id_id&limit=6`).then(r => r.json()),
+                const enc = encodeURIComponent(q);
+                const [trackRes, artistRes, albumRes] = await Promise.all([
+                    fetch(`${ITUNES_API}/search?term=${enc}&media=music&country=ID&lang=id_id&limit=30`).then(r => r.json()),
+                    fetch(`${ITUNES_API}/search?term=${enc}&entity=musicArtist&country=ID&lang=id_id&limit=6`).then(r => r.json()),
+                    fetch(`${ITUNES_API}/search?term=${enc}&entity=album&country=ID&lang=id_id&limit=10`).then(r => r.json()).catch(() => ({ results: [] })),
                 ]);
                 const tracks = (trackRes.results || []).filter(t => t.trackId && t.previewUrl).map(musicNormalize);
                 const artists = (artistRes.results || []).filter(a => a.artistId && a.artistName);
-                if (!tracks.length && !artists.length) {
+                const albums = (albumRes.results || []).filter(a => a.collectionId && a.collectionName);
+                if (!tracks.length && !artists.length && !albums.length) {
                     el.innerHTML = `<div style="text-align:center;padding:50px 15px;color:#444">Tidak ada hasil untuk "${q}"</div>`;
                     return;
                 }
                 _musicQueue = tracks;
+                const esc = t => String(t || '').replace(/'/g, '&#39;');
+                const norm = t => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+                const nq = norm(q);
+                const na = artists[0] ? norm(artists[0].artistName) : '';
+                const topArtist = (artists[0] && nq && (na === nq || na.startsWith(nq) || nq.startsWith(na))) ? artists[0] : null;
+                const label = txt => `<div style="font-size:15px;font-weight:800;color:#fff;padding:0 15px 10px">${txt}</div>`;
+                const ell = 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
                 let html = '';
+                // Hasil Teratas
+                if (topArtist) {
+                    html += `<div style="padding:4px 0 18px">${label('Hasil Teratas')}
+                        <div onclick="musicOpenArtistProfile(${topArtist.artistId},'${esc(topArtist.artistName)}')" style="margin:0 15px;background:#111;border-radius:14px;padding:14px;display:flex;align-items:center;gap:14px;cursor:pointer">
+                            <div class="music-avatar-ring" style="width:72px;height:72px;flex-shrink:0"><div id="artistCircle-${topArtist.artistId}-searchtop" class="music-avatar-ring-inner"><i class="fa-solid fa-user-music" style="font-size:26px;color:#444"></i></div></div>
+                            <div style="min-width:0"><div style="font-size:18px;font-weight:800;color:#fff;${ell}">${topArtist.artistName}</div><div style="font-size:12px;color:#888;margin-top:3px">Artis${topArtist.primaryGenreName ? ' · ' + topArtist.primaryGenreName : ''}</div></div>
+                        </div></div>`;
+                } else if (tracks[0]) {
+                    const t0 = tracks[0];
+                    html += `<div style="padding:4px 0 18px">${label('Hasil Teratas')}
+                        <div onclick="musicPlayFromQueue(0)" style="margin:0 15px;background:#111;border-radius:14px;padding:14px;display:flex;align-items:center;gap:14px;cursor:pointer">
+                            <img src="${t0.artworkSmall}" onerror="musicImgFallback(this)" style="width:72px;height:72px;border-radius:10px;object-fit:cover;flex-shrink:0;background:#1a1a1a">
+                            <div style="min-width:0"><div style="font-size:16px;font-weight:800;color:#fff;${ell}">${t0.title}</div><div style="font-size:12px;color:#888;margin-top:3px;${ell}">Lagu · ${t0.artist}</div></div>
+                        </div></div>`;
+                }
+                // Lagu (6 teratas, sisanya lewat tombol)
+                if (tracks.length) {
+                    const first = tracks.slice(0, 6), rest = tracks.slice(6);
+                    html += `<div style="padding:0 0 14px">${label('Lagu')}${first.map((t, i) => musicListItemHTML(t, i)).join('')}
+                        ${rest.length ? `<div id="musicSearchMore" style="display:none">${rest.map((t, i) => musicListItemHTML(t, i + 6)).join('')}</div>
+                        <div class="toggle-btn" style="padding:8px 15px" onclick="document.getElementById('musicSearchMore').style.display='block';this.remove()">Tampilkan lebih banyak</div>` : ''}</div>`;
+                }
+                // Artis (foto bulat)
                 if (artists.length) {
-                    html += `<div style="padding:4px 0 10px">
-                        <div style="font-size:13px;font-weight:800;color:#888;padding:0 15px 10px">Artis</div>
+                    html += `<div style="padding:4px 0 18px">${label('Artis')}
                         <div style="display:flex;gap:16px;overflow-x:auto;padding:0 15px;scrollbar-width:none">
                             ${artists.map(a => `
-                                <div onclick="musicOpenArtistProfile(${a.artistId},'${(a.artistName||'').replace(/'/g,"&#39;")}')" style="flex-shrink:0;width:78px;text-align:center;cursor:pointer">
+                                <div onclick="musicOpenArtistProfile(${a.artistId},'${esc(a.artistName)}')" style="flex-shrink:0;width:78px;text-align:center;cursor:pointer">
                                     <div class="music-avatar-ring" style="width:78px;height:78px;margin-bottom:6px">
-                                        <div id="artistCircle-${a.artistId}-searchres" class="music-avatar-ring-inner">
-                                            <i class="fa-solid fa-user-music" style="font-size:28px;color:#444"></i>
-                                        </div>
+                                        <div id="artistCircle-${a.artistId}-searchres" class="music-avatar-ring-inner"><i class="fa-solid fa-user-music" style="font-size:28px;color:#444"></i></div>
                                     </div>
-                                    <div style="font-size:11px;font-weight:600;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.artistName}</div>
+                                    <div style="font-size:11px;font-weight:600;color:#ccc;${ell}">${a.artistName}</div>
                                 </div>`).join('')}
-                        </div>
-                    </div>`;
+                        </div></div>`;
                 }
-                if (tracks.length) {
-                    html += `<div style="font-size:13px;font-weight:800;color:#888;padding:14px 15px 4px">Lagu</div>`;
-                    html += tracks.map((t, i) => musicListItemHTML(t, i)).join('');
+                // Album
+                if (albums.length) {
+                    html += `<div style="padding:4px 0 18px">${label('Album')}
+                        <div style="display:flex;gap:14px;overflow-x:auto;padding:0 15px;scrollbar-width:none">
+                            ${albums.map(a => { const art = (a.artworkUrl100 || '').replace('100x100', '600x600'); return `
+                                <div onclick="musicOpenAlbumDetail(${a.collectionId},'${esc(a.collectionName)}','${esc(a.artistName)}','${art}')" style="flex-shrink:0;width:120px;cursor:pointer">
+                                    <div style="width:120px;height:120px;border-radius:10px;overflow:hidden;background:#1a1a1a"><img src="${art}" loading="lazy" onerror="musicImgFallback(this)" style="width:100%;height:100%;object-fit:cover"></div>
+                                    <div style="margin-top:7px;font-size:12px;font-weight:700;color:#fff;${ell}">${a.collectionName}</div>
+                                    <div style="font-size:11px;color:#777;margin-top:2px;${ell}">${a.artistName || ''}${a.releaseDate ? ' · ' + a.releaseDate.slice(0, 4) : ''}</div>
+                                </div>`; }).join('')}
+                        </div></div>`;
                 }
                 el.innerHTML = html;
                 if (artists.length) musicHydrateArtistArt(artists, 'searchres');
+                if (topArtist) musicHydrateArtistArt([topArtist], 'searchtop');
             } catch(e) {
                 el.innerHTML = `<div style="text-align:center;padding:50px 15px;color:#444">Gagal memuat hasil</div>`;
             }
@@ -4471,6 +4514,35 @@
             musicPlayCurrentQueueItem();
         }
 
+        // Baris playlist: nomor urut di kiri, durasi lagu di kanan
+        function musicPlaylistRowHTML(t, i, playFn) {
+            const dur = t.duration || 0;
+            let h = musicListItemHTML(t, i).replace(`musicPlayFromQueue(${i})`, playFn);
+            h = h.replace('<img loading', `<span style="width:18px;text-align:center;font-size:12px;color:#666;flex-shrink:0">${i + 1}</span><img loading`);
+            h = h.replace('<i class="fa-', `<span style="font-size:11px;color:#777;flex-shrink:0">${Math.floor(dur / 60)}:${String(dur % 60).padStart(2, '0')}</span><i class="fa-`);
+            return h;
+        }
+        // Warna dominan sampul (untuk latar sampul playlist); bila gambar tidak boleh dibaca, pakai warna bawaan
+        function _musicCoverColor(url) {
+            return new Promise(res => {
+                try {
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.onload = () => {
+                        try {
+                            const c = document.createElement('canvas'); c.width = c.height = 16;
+                            const x = c.getContext('2d'); x.drawImage(img, 0, 0, 16, 16);
+                            const d = x.getImageData(0, 0, 16, 16).data;
+                            let r = 0, g = 0, b = 0, n = 0;
+                            for (let i = 0; i < d.length; i += 4) { const L = (d[i] + d[i + 1] + d[i + 2]) / 3; if (L < 25 || L > 235) continue; r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
+                            res(n ? [Math.round(r / n), Math.round(g / n), Math.round(b / n)] : null);
+                        } catch (e) { res(null); }
+                    };
+                    img.onerror = () => res(null);
+                    img.src = url;
+                } catch (e) { res(null); }
+            });
+        }
         function musicListItemHTML(t, idx) {
             const isLiked = musicIsLiked(t.id);
             const isPlaying = _musicCurrentTrack && _musicCurrentTrack.id === t.id;
